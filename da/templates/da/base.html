@@ -1,0 +1,55 @@
+{% load staticfiles %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Django test{% endblock %}</title>
+
+    {% block jquery_ui_css_files %}{% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'dj/vendors/bs/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'dj/vendors/bs/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'dj/dj.css' %}">
+</head>
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#0c4b33;background-image:none;">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Django test</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li {% block active_name_item %}{% endblock %}><a href="{% url 'dj:your_name' %}">Name</a></li>     <!--  class="active" -->
+            {% if not user.is_authenticated %}
+              <li {% block active_login_item %}{% endblock %}><a href="{% url 'dj:login' %}?next={{request.path}}">Log In</a></li> 
+            {% else %}
+              <li><a href="{% url 'dj:logout' %}">Log Out</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav> 
+
+    <div class="container-fluid" role="main">
+    {% block content %}{% endblock content %}
+    </div> 
+
+
+    <!-- ================================================== -->
+    <script src="{% static 'dj/vendors/jq/jquery-1.11.1.min.js' %}"></script>
+    {% block jquery_ui_js_files %}{% endblock %}
+    <script src="{% static 'dj/vendors/bs/bootstrap.min.js' %}"></script>
+    {% block page_js_files %}{% endblock %}
+    <!-- ================================================== -->
+</body>
+</html>
