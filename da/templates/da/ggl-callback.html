@@ -1,0 +1,85 @@
+{% load staticfiles %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Google Login</title>
+
+    <link rel="stylesheet" type="text/css" href="{% static 'da/vendors/bs/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'da/vendors/bs/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'da/da.css' %}">
+</head>
+<body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#0c4b33;background-image:none;">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Djangy</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+          </ul>
+        </div>
+      </div>
+    </nav> 
+
+    <div class="container-fluid" role="main">
+        <h2>Google-based login</h2>
+        <p id="logging_result">Logging...</p>
+    </div> 
+
+
+    <!-- ================================================== -->
+    <script src="{% static 'da/vendors/jq/jquery-1.11.1.min.js' %}"></script>
+    <script src="{% static 'da/vendors/bs/bootstrap.min.js' %}"></script>
+    <!-- ================================================== -->
+
+    <script type="text/javascript">
+        $( document ).ready(function() {
+
+            var GOOGLE_LOGIN_URL = '/rest-auth/google/';
+
+            var tokenKey = 'access_token=';
+            var address = window.location.href;
+            var tokenStart = address.indexOf( tokenKey );
+
+            if (tokenStart === -1) {
+                return;
+            } 
+            else {
+                var token = address.slice(tokenStart + tokenKey.length);
+                var tokenEnd = token.indexOf( '&' );
+                if (tokenEnd !== -1) {
+                    token = token.slice(0, tokenEnd);
+                }
+            }
+
+            var data = { 
+                    access_token: token,
+                    code: ""
+            };
+
+            $.ajax( {
+                url: GOOGLE_LOGIN_URL, 
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify( data ),
+                processData: false,
+            })
+            .done(function( data, textStatus, jqXHR ){
+                $('#logging_result').text('You have logged in successfully');
+                window.opener.location.reload();
+                window.close();
+            })
+            .fail(function( jqXHR, textStatus, errorThrown ){
+                $('#logging_result').text('Sorry, there are some problems: ' + textStatus);
+            });
+
+        });
+    </script>
+</body>
+</html>

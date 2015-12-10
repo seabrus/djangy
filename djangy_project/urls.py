@@ -26,8 +26,9 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^rest-auth/', include('rest_auth.urls')),
     url(r'^rest-auth/registration/', include('rest_auth.registration.urls')),
-    url(r'^rest-auth/google/$', GoogleLogin.as_view(), name='google_login'),
-        # http://127.0.0.1:8000/rest-auth/google/login/callback/ - Authorized redirect URIs
+    url(r'^rest-auth/google/$', GoogleLogin.as_view(), name='ggl_login'),
+    url(r'^rest-auth/google/callback/$', TemplateView.as_view(template_name='da/ggl-callback.html'), name='ggl_callback'),
+        # http://127.0.0.1:8000/rest-auth/google/callback/ - Authorized redirect URIs
     url(r'^accounts/', include('allauth.urls')),
         # http://127.0.0.1:8000/accounts/google/login/callback/ - Authorized redirect URIs
 
