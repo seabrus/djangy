@@ -6,6 +6,7 @@ import time
 import unittest
 
 PAGE_ADDRESS = 'http://127.0.0.1:8000'
+PASSWORD = ' '
 
 
 class GeneralTest(unittest.TestCase):
@@ -33,7 +34,7 @@ class GeneralTest(unittest.TestCase):
         time.sleep(2)
 
         inputbox_Passwd = self.browser.find_element_by_id('Passwd')
-        inputbox_Passwd.send_keys('SantaFe35')
+        inputbox_Passwd.send_keys( PASSWORD )
         inputbox_Passwd.send_keys(Keys.ENTER)
         time.sleep(2)
 
