@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en"  ng-app="nTest">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico">
+
+    <title>Example of Angular Registration Form | JavaScript</title>
+    <meta name="description" content="This registration form is developed on the basis of AngularJS. Features: an extensible timetable of working hours and tabs.">
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="vendors/bootstrap/css/bootstrap-theme.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="vendors/bootstrap/css/theme.css" rel="stylesheet">
+
+    <!-- Custom styles for the app -->
+    <link href="css/ntest.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body role="document">
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">NNN</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li class="divider"></li>
+                <li class="dropdown-header">Nav header</li>
+                <li><a href="#">Separated link</a></li>
+                <li><a href="#">One more separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container theme-showcase" role="main">
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+      <div class="jumbotron">
+        <h1>Angular-Based Registration Form</h1>
+        <p>The registration form below is developed on the basis of AngularJS.</p>
+        <p>Required fields are marked with the sign *.</p>
+      </div>
+
+
+<!-- === APPLICATION === -->
+<!-- App controller -->
+      <div ng-controller="nTestController as ctrl">
+
+<!-- Tabs selector -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Basics' ">Basics</a></li>
+          <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Logo' ">Logo</a></li>
+          <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Plans' ">Subcription plans</a></li>
+          <li role="presentation" class="font22 save-profile-bkground"><a href="" data-toggle="tab" 
+               ng-click="ctrl.currentTab='SaveProfile'; ctrl.saveUserProfile( ctrl.savingResult )" 
+               class="save-profile-color">Save profile</a></li> 
+        </ul>
+
+<!-- Registration FORM -->
+        <form class="form-horizontal" name="regForm" 
+                  ng-submit="ctrl.currentTab='SaveProfile'; ctrl.saveUserProfile( ctrl.savingResult )" >
+         <div ng-switch="ctrl.currentTab">
+
+
+<!-- TAB: Basic information -->
+          <div class="registration" ng-switch-when="Basics">
+
+            <div class="page-header">
+              <h2>Basic information</h2> <a name="required-fields"></a>
+            </div>
+
+            <div class="form-group" style="margin-left:0px;">
+              <label for="companyName"><i>*</i> Business name:</label>
+              <input type="text" id="companyName" name="companyName" required=""
+                         ng-model="ctrl.regData.companyName" class="form-control" > ​
+            </div>
+            <div class="form-group" ng-class="{'has-error': regForm.foundedAt.$dirty && regForm.foundedAt.$invalid}" style="margin-left:0px;">
+              <label for="foundedAt"><i>*</i> Founded at:</label>
+              <input type="number" id="foundedAt" name="foundedAt" required=""
+                         placeholder="2000" min="1700" max="2020"
+                        ng-model="ctrl.regData.foundedAt" class="form-control">​
+            </div>
+            <div class="form-group" ng-class="{'has-error': regForm.email.$dirty && regForm.email.$invalid}" style="margin-left:0px;">
+              <label><i>*</i> Contact email:</label>
+              <input type="email" id="email" name="email" required="" placeholder="your_name@company.com" 
+                         ng-model="ctrl.regData.email" class="form-control"> ​
+            </div>
+            <div class="form-group" style="margin-left:0px;">
+              <label for="">Accept payments:</label>
+              <select ng-model="ctrl.regData.paymentMethod" 
+                          ng-options="method for method in ctrl.paymentMethods" class="form-control">
+              </select>
+            </div>
+
+         <!-- Opening hours -->
+            <label class="pointer" ng-class="ctrl.getHoursClass()" ng-click="ctrl.showHours=!ctrl.showHours">Working hours:</label>
+            <div opening-hours-directive=""></div> 
+
+         <!-- Alerts -->
+            <div class="blank">&nbsp;</div>
+            <div class="alert alert-warning" role="alert" ng-show="regForm.$dirty && regForm.$invalid">
+                <strong class="font22">&#10004;</strong> Please fill in the mandatory field(s) <a href="#required-fields">above</a>: 
+                <span ng-show="regForm.companyName.$invalid"><br>&mdash; Business name</span>
+            </div>
+
+          </div>   <!-- <div class="registration"> -->
+
+
+
+ <!-- TAB: Logo -->
+          <div class="registration"  ng-switch-when="Logo">
+
+            <div class="page-header">
+              <h2>Company logo</h2>
+            </div>
+
+          </div>   <!-- <div class="registration"> -->
+
+
+
+<!-- TAB: subscribtion plans -->
+        <div ng-switch-when="Plans">
+
+          <div class="page-header">
+            <h2>Subscribtion plans</h2>
+          </div>
+
+          <div class="row">
+            <div class="col-sm-4" ng-repeat="plan in ctrl.subscriptionPlans">
+              <div class="panel" ng-class="plan.style">
+                <div class="panel-heading">
+                  <h3 class="panel-title font18">
+                    <label><input type="radio" name="plan" ng-model="ctrl.regData.subscriptionPlan" ng-value="plan.name">
+                    <span ng-bind="plan.name"></span></label>
+                  </h3>
+                </div>
+                <div class="panel-body" ng-bind="plan.description"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>   <!--   <div ng-switch-when="Plans">   -->
+
+
+
+<!-- TAB : Save profile -->
+        <div ng-switch-when="SaveProfile">
+            <div class="blank">&nbsp;</div>
+            <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='error' ">
+                <strong class="font22">&#10004; Warning:</strong> &nbsp;Error occurred when saving the profile. Try again a bit later
+            </div>
+            <div class="alert alert-success" role="alert" ng-show="ctrl.savingResult[0]==='success' ">
+                <strong class="font22">&#10004; Success:</strong> &nbsp;Your profile was saved successfully
+            </div>
+        </div>   <!--   <div ng-switch-when="SaveProfile">   -->
+
+
+         </div> <!-- ng-switch -->
+
+<!-- Submit button -->
+          <div class="save-button">
+            <input type="submit" class="btn btn-success btn-lg" value="Save" ng-disabled="regForm.$invalid">
+            <!-- <button type="button" class="btn btn-lg btn-success" ng-disabled="regForm.$invalid">Save</button> -->
+          </div>
+
+        </form>
+      </div>
+
+<!-- === end of the application === -->
+
+
+    </div> <!-- /container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="vendors/jquery/jquery.min.js"></script>
+    <script src="vendors/bootstrap/js/bootstrap.min.js"></script>
+    <!-- <script src="vendors/bootstrap/js/docs.min.js"></script> -->
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="vendors/bootstrap/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- 
+    ================================================== -->
+    <script src="vendors/angular/angular1-3-12.min.js"></script>
+    <script src="js/ntest.js"></script>
+  </body>
+</html>
+

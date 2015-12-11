@@ -1,0 +1,35 @@
+            <div class="row hours-margin" ng-show="ctrl.showHours">
+              <div class="col-xs-8 col-sm-6 col-md-4">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th class="day">Day</th>
+                      <th class="from-until">From </th>
+                      <th class="from-until">Until </th>
+                      <th> </th>
+                      <th> </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="dayOfWeek in ctrl.regData.openingHours">
+                      <td ng-bind="dayOfWeek.dayName"></td>
+                      <td colspan="4">
+                        <table class="table no-bottom">
+                          <tbody>
+                            <tr ng-repeat="hrs in dayOfWeek.hours as results">
+                              <td class="no-border"><input type="text" placeholder="10:00" ng-model="hrs.from"></td>
+                              <td class="no-border"><input type="text" placeholder="14:00" ng-model="hrs.until"></td>
+                              <td class="no-border" ng-click="ctrl.deleteTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img src="img/delete.png" alt="Delete this time span" title="Delete this time span"></td>
+                              <td class="no-border" ng-click="ctrl.addTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img src="img/plus.png" alt="Add a new time span below" title="Add a new time span below"></td>
+                            </tr>
+                            <tr ng-if="results.length === 0">
+                              <td colspan="4" class="no-border td-center" ng-click="ctrl.addTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img src="img/plus.png" alt="Add a new time span" title="Add a new time span"> Add a new time span</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>

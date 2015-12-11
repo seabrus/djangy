@@ -31,10 +31,8 @@ urlpatterns = [
         # http://127.0.0.1:8000/rest-auth/google/callback/ - Authorized redirect URIs
     url(r'^accounts/', include('allauth.urls')),
         # http://127.0.0.1:8000/accounts/google/login/callback/ - Authorized redirect URIs
-
     #url(r'^accounts/profile/$', RedirectView.as_view(url='/', permanent=True), name='profile-redirect'),
 
-
-    url(r'^$', TemplateView.as_view(template_name='da/dummy.html'), name='dummy_home'),
+    url(r'^$', include('da.urls', namespace='da')),
 
 ]

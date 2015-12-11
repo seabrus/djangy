@@ -8,55 +8,68 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Google Login</title>
 
-    <link rel="stylesheet" type="text/css" href="{% static 'da/vendors/bs/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'da/vendors/bs/bootstrap-theme.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'da/da.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'da/lib/bs/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'da/lib/bs/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'da/css/da.css' %}">
 </head>
 <body>
 
-    <!-- Fixed navbar -->
     <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#0c4b33;background-image:none;">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">Djangy</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-          </ul>
+          <a class="navbar-brand" href="#">Djangy</a>
         </div>
       </div>
     </nav> 
 
     <div class="container-fluid" role="main">
         <h2>Google-based login</h2>
-        <p id="logging_result">Logging...</p>
+        <p id="logging_result">Logging &nbsp;<img src="{% static 'da/img/loading.gif' %}"></p>
     </div> 
 
 
     <!-- ================================================== -->
-    <script src="{% static 'da/vendors/jq/jquery-1.11.1.min.js' %}"></script>
-    <script src="{% static 'da/vendors/bs/bootstrap.min.js' %}"></script>
+    <script src="{% static 'da/lib/jq/jquery-1.11.1.min.js' %}"></script>
+    <!-- <script src="{% static 'da/lib/bs/bootstrap.min.js' %}"></script> -->
     <!-- ================================================== -->
-
     <script type="text/javascript">
         $( document ).ready(function() {
 
-            var GOOGLE_LOGIN_URL = '/rest-auth/google/';
+            /**
+                query [String]       -- query string, e.g. a page address with "?query"
+                queryKey [String]  -- query key to select, with the symbol "=" added at the end, e.g. "access_token="
+                divider [String]     -- the divider of key=value pairs, usuallt it's equal to "&"
+            */
+            function getQueryValue( query, queryKey, divider ) {
+                divider = divider || '&';
+                var startPos = query.indexOf( queryKey );
 
-            var tokenKey = 'access_token=';
-            var address = window.location.href;
-            var tokenStart = address.indexOf( tokenKey );
-
-            if (tokenStart === -1) {
-                return;
-            } 
-            else {
-                var token = address.slice(tokenStart + tokenKey.length);
-                var tokenEnd = token.indexOf( '&' );
-                if (tokenEnd !== -1) {
-                    token = token.slice(0, tokenEnd);
+                if (startPos === -1) {
+                    return null;
+                } 
+                else {
+                    var result = query.slice(startPos + queryKey.length);
+                    var endPos = result.indexOf( divider );
+                    if (endPos !== -1) {
+                        result = result.slice(0, endPos);
+                    }
                 }
+
+            return result;
             }
+
+
+      //   Getting the Google access_token 
+            var GOOGLE_LOGIN_URL_TO_REDIRECT = '/rest-auth/google/';
+            var stateKey = 'state=';
+            var tokenKey = 'access_token=';
+
+            var address = window.location.href;
+
+            var state = getQueryValue( address, stateKey );
+            if ( !state || (stateKey+state) !== window.opener.gglloginstate)  return;
+            var token = getQueryValue( address, tokenKey );
+            if ( !token )  return;
 
             var data = { 
                     access_token: token,
@@ -64,7 +77,7 @@
             };
 
             $.ajax( {
-                url: GOOGLE_LOGIN_URL, 
+                url: GOOGLE_LOGIN_URL_TO_REDIRECT, 
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify( data ),
@@ -72,10 +85,12 @@
             })
             .done(function( data, textStatus, jqXHR ){
                 $('#logging_result').text('You have logged in successfully');
+                window.opener.gglloginstate = undefined;
                 window.opener.location.reload();
                 window.close();
             })
             .fail(function( jqXHR, textStatus, errorThrown ){
+                window.opener.gglloginstate = undefined;
                 $('#logging_result').text('Sorry, there are some problems: ' + textStatus);
             });
 

@@ -6,7 +6,7 @@ import time
 import unittest
 
 PAGE_ADDRESS = 'http://127.0.0.1:8000'
-PASSWORD = ' '
+PASSWORD = 'SantaFe35'
 
 
 class GeneralTest(unittest.TestCase):
@@ -62,6 +62,7 @@ class GeneralTest(unittest.TestCase):
         #with self.assertRaises( NoSuchElementException ):
         #     google_logout_menu_item = self.browser.find_element_by_link_text('Log Out')
         self.assertIn('Log Out', self.browser.page_source)
+        self.assertIn('sean:', self.browser.page_source)
 
         self.fail('Success:  test_google_login_works')
 

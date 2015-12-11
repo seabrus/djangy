@@ -1,69 +1,24 @@
-{% load staticfiles %}
-
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dummy page</title>
-
-    <link rel="stylesheet" type="text/css" href="{% static 'da/vendors/bs/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'da/vendors/bs/bootstrap-theme.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'da/da.css' %}">
-</head>
-<body>
-
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#0c4b33;background-image:none;">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">Djangy</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            {% if not user.is_authenticated %}
-              <li class="active"><a href="{% url 'account_login' %}?next={{request.path}}">Log In</a></li>
-              <li><a href="" onclick="googleLogin();" style="cursor:pointer;" id="google_login_menu_item">Google LogIn</a></li>
-              <li><a href="{% url 'rest_framework:login' %}">REST API</a></li>
-            {% else %}
-              <li class="active"><a href="{% url 'account_logout' %}">Log Out</a></li>
-            {% endif %}
-          </ul>
-        </div>
-      </div>
-    </nav> 
-
-    <div class="container-fluid" role="main">
-        <h1>Welcome!</h1>
-    </div> 
-
-        {% block content %}{% endblock content %}
+function googleLogin() {
+    var auth = 'https://accounts.google.com/o/oauth2/v2/auth?';
+    var response_type = 'response_type=token';
+    var redirect_uri = 'redirect_uri=http://127.0.0.1:8000/rest-auth/google/callback/';
+    var scope = 'scope=profile';
+    var state = 'state=ggl_login_' + Math.random().toString(32).substr(2);
+    var client_id = 'client_id=1002894023379-v9kp62nummuhj8leq06kueogc6u8i8p9.apps.googleusercontent.com';
+    var url = auth + '&' + response_type + '&' + redirect_uri + '&' + scope + '&' + state + '&' + client_id;
+    var popupWidth = 500;
+    var popupHeight = 400;
+    var left = window.screenX + (window.outerWidth / 2) - (popupWidth / 2);
+    var top = window.screenY + (window.outerHeight / 2) - (popupHeight / 2);
+    window.gglloginstate = state;
+    var windowProps = 'width=' + popupWidth + ',height=' + popupHeight + ',top=' + top + ',left=' + left +
+           ',location=yes,toolbar=no,menubar=no';
+    var popup = window.open(url, 'login popup', windowProps);
+}
 
 
 
-<script>
-// Open the popup
-    function googleLogin() {
-        var url = "https://accounts.google.com/o/oauth2/v2/auth?response_type=token&redirect_uri=http://127.0.0.1:8000/rest-auth/google/callback/&scope=profile&state=login_token&client_id=1002894023379-v9kp62nummuhj8leq06kueogc6u8i8p9.apps.googleusercontent.com";
-        var popupWidth = 500;
-        var popupHeight = 400;
-        var left = window.screenX + (window.outerWidth / 2) - (popupWidth / 2);
-        var top = window.screenY + (window.outerHeight / 2) - (popupHeight / 2);
-        var windowProps = 'width=' + popupWidth + ',height=' + popupHeight + ',top=' + top + ',left=' + left +
-                   ',location=yes,toolbar=no,menubar=no';
-
-        popupWindow = window.open(url, 'google login popup', windowProps);
-    }
-</script>
-
-<!--
+/*
 <script>
 // https://github.com/timdream/google-oauth2-web-client
 'use strict';
@@ -293,7 +248,4 @@ var go2 = new GO2( { clientId: '1002894023379-v9kp62nummuhj8leq06kueogc6u8i8p9.a
                 } );
 
 </script>
--->
-
-</body>
-</html>
+*/
