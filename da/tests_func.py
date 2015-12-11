@@ -6,7 +6,7 @@ import time
 import unittest
 
 PAGE_ADDRESS = 'http://127.0.0.1:8000'
-PASSWORD = 'SantaFe35'
+PASSWORD = ' '
 
 
 class GeneralTest(unittest.TestCase):
