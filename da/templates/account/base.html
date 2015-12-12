@@ -1,0 +1,59 @@
+{% load staticfiles %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block head_title %}{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
+
+    <link rel="stylesheet" type="text/css" href="{% static 'da/lib/bs/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'da/lib/bs/bootstrap-theme.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'da/css/da.css' %}">
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="background-color:#0c4b33;background-image:none;">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="/">Djangy</a>
+        </div>
+      </div>
+    </nav> 
+
+    <div class="container-fluid" role="main">
+
+    {% block body %}
+
+    {% if messages %}
+    <div>
+      <strong>Messages:</strong>
+      <ul>
+	{% for message in messages %}
+	<li>{{message}}</li>
+	{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    <div>
+      <ul>
+	{% if user.is_authenticated %}
+	<li><a href="{% url 'account_email' %}">Change E-mail</a></li>
+	<li><a href="{% url 'account_logout' %}">Sign Out</a></li>
+	{% endif %}
+      </ul>
+    </div>
+
+    {% block content %}
+    {% endblock %}
+
+    {% endblock body %}
+
+    {% block extra_body %}
+    {% endblock %}
+
+    </div>   <!-- end of <div class="container-fluid" role="main"> -->
+  </body>
+</html>

@@ -21,7 +21,7 @@ from da.views import GoogleLogin
 
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('da.urls', namespace='da')),
 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^rest-auth/', include('rest_auth.urls')),
@@ -29,10 +29,23 @@ urlpatterns = [
     url(r'^rest-auth/google/$', GoogleLogin.as_view(), name='ggl_login'),
     url(r'^rest-auth/google/callback/$', TemplateView.as_view(template_name='da/ggl-callback.html'), name='ggl_callback'),
         # http://127.0.0.1:8000/rest-auth/google/callback/ - Authorized redirect URIs
+
     url(r'^accounts/', include('allauth.urls')),
         # http://127.0.0.1:8000/accounts/google/login/callback/ - Authorized redirect URIs
     #url(r'^accounts/profile/$', RedirectView.as_view(url='/', permanent=True), name='profile-redirect'),
 
-    url(r'^$', include('da.urls', namespace='da')),
+    url(r'^admin/', include(admin.site.urls)),
 
 ]
+
+"""
+     This is not suitable for production use! 
+     https://docs.djangoproject.com/en/1.8/howto/static-files/#serving-uploaded-files-in-development
+"""
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns += static( settings.MEDIA_URL, document_root=settings.MEDIA_ROOT )
+
+
+

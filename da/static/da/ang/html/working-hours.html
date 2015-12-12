@@ -19,11 +19,18 @@
                             <tr ng-repeat="hrs in dayOfWeek.hours as results">
                               <td class="no-border"><input type="text" placeholder="10:00" ng-model="hrs.from"></td>
                               <td class="no-border"><input type="text" placeholder="14:00" ng-model="hrs.until"></td>
-                              <td class="no-border" ng-click="ctrl.deleteTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img src="img/delete.png" alt="Delete this time span" title="Delete this time span"></td>
-                              <td class="no-border" ng-click="ctrl.addTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img src="img/plus.png" alt="Add a new time span below" title="Add a new time span below"></td>
+                              <td class="no-border" ng-click="ctrl.deleteTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img 
+                                    src="/static/da/ang/img/delete.png" alt="Delete this time span" 
+                                    class="whours" title="Delete this time span"></td>
+                              <td class="no-border" ng-click="ctrl.addTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img 
+                                    src="/static/da/ang/img/plus.png" alt="Add a new time span below" 
+                                    class="whours" title="Add a new time span below"></td>
                             </tr>
                             <tr ng-if="results.length === 0">
-                              <td colspan="4" class="no-border td-center" ng-click="ctrl.addTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img src="img/plus.png" alt="Add a new time span" title="Add a new time span"> Add a new time span</td>
+                              <td colspan="4" class="no-border td-center" 
+                                    ng-click="ctrl.addTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img 
+                                    src="/static/da/ang/img/plus.png" alt="Add a new time span" class="whours"
+                                    title="Add a new time span"> Add a new time span</td>
                             </tr>
                           </tbody>
                         </table>

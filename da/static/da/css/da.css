@@ -2,6 +2,13 @@ body {
     padding-top: 70px;
 }
 
+.form-error {
+    width: 100%;
+    color: red;
+    font-family: Verdana;
+    font-size: 10pt;
+    padding: 5px 5px;
+}
 
 .field-has-error {
     border-color: #a94442;

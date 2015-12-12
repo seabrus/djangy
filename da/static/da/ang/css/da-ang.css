@@ -82,11 +82,19 @@
 }
 
 
-.registration img {
+.registration img.whours {
     width:14px;
     margin: 0 0 0 10px;
     cursor:pointer;
 }
+
+.registration .file-input {
+    width: 350px;
+    padding: 0 0;
+    text-align: left;
+    font-size: 16px;
+}
+
 
 .table .no-bottom {
     margin-bottom:0px;

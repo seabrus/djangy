@@ -1,0 +1,83 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-xs-8 col-xs-offset-0 col-sm-5 col-sm-offset-0 col-md-4 col-md-offset-0 col-lg-3 col-lg-offset-0">
+
+
+<h1>{% trans "Sign In" %}</h1>
+
+{% get_providers as socialaccount_providers %}
+
+{% if socialaccount_providers %}
+<p>{% blocktrans with site.name as site_name %}Please sign in with your social account:{% endblocktrans %}</p>
+
+<div class="socialaccount_ballot">
+  <ul class="socialaccount_providers">
+    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+  </ul>
+</div>
+
+{% include "socialaccount/snippets/login_extra.html" %}
+
+{% else %}
+<p>{% blocktrans %}If you have not created an account yet, then please
+<a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+{% endif %}
+
+<div class="login-or" style="margin:20px 0 5px 0;">{% blocktrans %}or use the form below:{% endblocktrans %}</div>
+
+<form class="login" method="POST" action="{% url 'account_login' %}">
+  {% csrf_token %}
+  {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    <div class="form-error"><strong>Error:</strong> {{ error|escape }} </div>
+    {% endfor %}
+  {% endif %}
+
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+
+  <div class="form-group">
+    <label for="id_login">Username:</label><br>
+    <input id="id_login" name="login" placeholder="Username" type="text" class="form-control"/>  
+    {% if form.login.errors %}
+      {% for error in form.login.errors %}
+      <div class="form-error"><strong>Error:</strong> {{ error|escape }} </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <div class="form-group">
+    <label for="id_password">Password:</label><br>
+    <input id="id_password"  name="password" placeholder="Password" type="password" class="form-control"/>
+    {% if form.password.errors %}
+      {% for error in form.password.errors %}
+      <div class="form-error"><strong>Error:</strong> {{ error|escape }} </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <div class="form-group">
+    <div class="remember-forgot-section">
+      <input id="id_remember" name="remember" type="checkbox" />
+      <label for="id_remember">Remember Me</label>
+      <a class="forgot" href="{% url 'account_reset_password' %}"> &nbsp;{% trans "Forgot Password?" %}</a>
+    </div>
+  </div>
+
+  <button class="primaryAction btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+   &nbsp;&nbsp;or &nbsp;<a href="{{ signup_url }}">Sign up</a> 
+</form>
+
+
+  </div>
+</div>
+{% endblock %}
