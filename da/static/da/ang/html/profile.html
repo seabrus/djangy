@@ -31,6 +31,7 @@
               <input type="text" id="companyName" name="companyName" required=""
                          ng-model="ctrl.regData.companyName" class="form-control" > ​
             </div>
+
             <div class="form-group" ng-class="{'has-error': regForm.foundedAt.$dirty && regForm.foundedAt.$invalid}" 
                    style="margin-left:0px;">
               <label for="foundedAt"><i>*</i> Founded at:</label>
@@ -38,11 +39,13 @@
                          placeholder="2000" min="1700" max="2020"
                         ng-model="ctrl.regData.foundedAt" class="form-control">​
             </div>
+
             <div class="form-group" ng-class="{'has-error': regForm.email.$dirty && regForm.email.$invalid}" style="margin-left:0px;">
               <label><i>*</i> Contact email:</label>
               <input type="email" id="email" name="email" required="" placeholder="your_name@company.com" 
                          ng-model="ctrl.regData.email" class="form-control"> ​
             </div>
+
             <div class="form-group" style="margin-left:0px;">
               <label for="">Accept payments:</label>
               <select ng-model="ctrl.regData.paymentMethod" 

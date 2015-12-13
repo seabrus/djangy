@@ -122,6 +122,25 @@ app.factory('CompanyListService', [ '$http', function( $http ) {
 app.factory('CompanyDetailsService', [ '$http', function( $http ) {
 
 	var CompanyDetailsData = {
+        id: 0,
+        companyName: '',
+        foundedAt: '',
+        email: '',
+        logoUrl: '',
+        paymentMethod: '',
+        subscriptionPlan: '',
+        openingHours: [
+          { dayName: 'Monday', hours: [ ] },
+          { dayName: 'Tuesday', hours: [ ] },
+          { dayName: 'Wednesday', hours: [ ] },
+          { dayName: 'Thursday', hours: [ ] },
+          { dayName: 'Friday', hours: [ ] },
+          { dayName: 'Saturday', hours: [ ] },
+          { dayName: 'Sunday', hours: [ ] },
+        ],
+	};
+
+	var dbData = {
         id: 22,
         companyName: 'ABC',
         foundedAt: '1970',
@@ -129,20 +148,45 @@ app.factory('CompanyDetailsService', [ '$http', function( $http ) {
         logoUrl: '/media/da/logo1.png',
         paymentMethod: 'PayPal',
         subscriptionPlan: 'Business plan',
-
-        openingHours: [
-          { dayName: 'Monday', hours: [ {from: '9:00', until: '12:30'}, {from: '14:00', until: '18:30'}, {from: '19:00', until: '23:30'} ] },
-          { dayName: 'Tuesday', hours: [ ] },
-          { dayName: 'Wednesday', hours: [ ] },
-          { dayName: 'Thursday', hours: [  {from: '9:00', until: '12:30'}, {from: '14:00', until: '18:30'}, {from: '19:00', until: '23:30'}  ] },
-          { dayName: 'Friday', hours: [ ] },
-          { dayName: 'Saturday', hours: [ ] },
-          { dayName: 'Sunday', hours: [ ] },
+        hours: [
+          { dayName: 'Monday', from: '9:00', until: '12:30', db_id: 11 },
+          { dayName: 'Tuesday', from: '9:00', until: '12:30', db_id: 21 },
+          { dayName: 'Thursday', from: '14:00', until: '18:00', db_id: 45 },
+          { dayName: 'Monday', from: '14:00', until: '16:30', db_id: 12 },
+          { dayName: 'Friday', from: '14:00', until: '16:30', db_id: 55 },
+          //{ dayName: 'Saturday', from: '', until: '', db_id: 62 },
+          { dayName: 'Monday', from: '19:00', until: '23:30', db_id: 15 },
+          { dayName: 'Tuesday', from: '19:00', until: '23:30', db_id: 22 },
+          { dayName: 'Wednesday', from: '', until: '', db_id: 30 },
+          { dayName: 'Sunday', from: '12:00', until: '13:30', db_id: 79 },
+          { dayName: 'Sunday', from: '19:00', until: '23:30', db_id: 77 },
         ],
 	};
 
+
     return  { 
-        getData: function( id ) { return CompanyDetailsData; }, 
+        getData: function( id ) { 
+            var commonParams = [ 'id', 'companyName', 'foundedAt', 'email', 'logoUrl', 'paymentMethod', 'subscriptionPlan' ];
+            for (var k=0, len=commonParams.length; k < len; k++) {
+                CompanyDetailsData[ commonParams[k] ] = dbData[ commonParams[k] ];
+            }
+
+            var days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+            for (var k=0; k < 7; k++) {
+                CompanyDetailsData.openingHours[ k ].hours = [];
+                for (var j=0, len=dbData.hours.length; j < len; j++) {
+                    if ( dbData.hours[ j ].dayName === days[k] ) {
+                        var times ={};
+                        times.from = dbData.hours[ j ].from;
+                        times.until = dbData.hours[ j ].until;
+                        times.db_id = dbData.hours[ j ].db_id;
+                        CompanyDetailsData.openingHours[ k ].hours.push( times );
+                    }
+                }
+            }
+
+            return CompanyDetailsData; 
+        }, 
     };
 
 }]);

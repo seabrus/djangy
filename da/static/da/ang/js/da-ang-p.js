@@ -1,15 +1,17 @@
 app.config(['$routeProvider', function($routeProvider) {
+
   $routeProvider.when('/profile', { 
     templateUrl: '/static/da/ang/html/profile.html', 
     controller: 'ProfileController', 
   });
+
 }]);
 
 
 app.controller('ProfileController', [ 'DataService', function( DataService ) {
 	var self = this;
 
-// Application data
+// Application data initialization
 	self.regData = DataService.getData();
     self.paymentMethods = DataService.getPaymentMethods();
     self.subscriptionPlans = DataService.getSubscriptionPlans();
@@ -24,16 +26,6 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
     self.savingResult = [ '' ];   // 'success' or 'error'
     self.saveUserProfile = function( result ) { DataService.saveUserProfileData( result ); };
 
-
-// Working hours timetable visibility
-	self.showHours = true;
-	self.getHoursClass = function() {
-        var yes = (self.showHours === false);
-        return {
-            'show-hours': yes,
-            'hide-hours': !yes
-        };
-    };
 
 //===============================================
 //     Add / Delete time spans
@@ -76,22 +68,22 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 app.factory('DataService', [ '$http', function( $http ) {
 
 	var regData = {
-        id: 1,
+        id: 0,
         companyName: '',
         foundedAt: '',
         email: '',
-        logoUrl: '/media/da/logo1.png',
-        paymentMethod: 'PayPal',
-        subscriptionPlan: 'Business plan',
+        logoUrl: '',
+        paymentMethod: '',
+        subscriptionPlan: '',
 
         openingHours: [
-          { dayName: 'Monday', hours: [ {from: '9:00', until: '12:30'}, {from: '14:00', until: '18:30'}, {from: '19:00', until: '23:30'} ] },
-          { dayName: 'Tuesday', hours: [  ] },
-          { dayName: 'Wednesday', hours: [ {from: '', until: ''} ] },
-          { dayName: 'Thursday', hours: [ {from: '', until: ''} ] },
-          { dayName: 'Friday', hours: [ {from: '', until: ''} ] },
-          { dayName: 'Saturday', hours: [ {from: '', until: ''} ] },
-          { dayName: 'Sunday', hours: [ {from: '', until: ''} ] },
+          { dayName: 'Monday', hours: [ ] },
+          { dayName: 'Tuesday', hours: [ ] },
+          { dayName: 'Wednesday', hours: [ ] },
+          { dayName: 'Thursday', hours: [ ] },
+          { dayName: 'Friday', hours: [ ] },
+          { dayName: 'Saturday', hours: [ ] },
+          { dayName: 'Sunday', hours: [ ] },
         ],
 	};
 
@@ -102,9 +94,54 @@ app.factory('DataService', [ '$http', function( $http ) {
         { name: 'Advanced plan', style: 'panel-info', description: 'A plan for corporate networks' } 
     ];
 
+	var dbData = {
+        id: 1,
+        companyName: '',
+        foundedAt: '',
+        email: '',
+        logoUrl: '/media/da/logo1.png',
+        paymentMethod: 'PayPal',
+        subscriptionPlan: 'Business plan',
+        hours: [
+          { dayName: 'Monday', from: '9:00', until: '12:30', db_id: 11 },
+          { dayName: 'Tuesday', from: '9:00', until: '12:30', db_id: 21 },
+          { dayName: 'Tuesday', from: '19:00', until: '23:30', db_id: 22 },
+          { dayName: 'Wednesday', from: '', until: '', db_id: 30 },
+          { dayName: 'Sunday', from: '12:00', until: '13:30', db_id: 79 },
+          { dayName: 'Thursday', from: '14:00', until: '18:00', db_id: 45 },
+          { dayName: 'Monday', from: '14:00', until: '16:30', db_id: 12 },
+          { dayName: 'Friday', from: '14:00', until: '16:30', db_id: 55 },
+          { dayName: 'Saturday', from: '14:00', until: '16:30', db_id: 62 },
+          { dayName: 'Monday', from: '19:00', until: '23:30', db_id: 15 },
+          { dayName: 'Sunday', from: '19:00', until: '23:30', db_id: 77 },
+        ],
+	};
+
 
     return  { 
-        getData: function() { return regData; }, 
+        getData: function() { 
+            var commonParams = [ 'id', 'companyName', 'foundedAt', 'email', 'logoUrl', 'paymentMethod', 'subscriptionPlan' ];
+            for (var k=0, len=commonParams.length; k < len; k++) {
+                regData[ commonParams[k] ] = dbData[ commonParams[k] ];
+            }
+
+            var days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+            for (var k=0; k < 7; k++) {
+                regData.openingHours[ k ].hours = [];
+                for (var j=0, len=dbData.hours.length; j < len; j++) {
+                    if ( dbData.hours[ j ].dayName === days[k] ) {
+                        var times ={};
+                        times.from = dbData.hours[ j ].from;
+                        times.until = dbData.hours[ j ].until;
+                        times.db_id = dbData.hours[ j ].db_id;
+                        regData.openingHours[ k ].hours.push( times );
+                    }
+                }
+            }
+
+            return regData;
+        },
+
         getPaymentMethods: function() { return paymentMethods; }, 
         getSubscriptionPlans: function() { return subscriptionPlans; },
 
