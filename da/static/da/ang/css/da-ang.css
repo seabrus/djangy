@@ -1,9 +1,11 @@
 .blank {
     margin: 20px 0 0 0;
 }
-
 .font14 {
     font-size:14px;
+}
+.font14pt {
+    font-size:14pt;
 }
 .font16 {
     font-size:16px;
@@ -23,6 +25,7 @@
     display:block;
     font-size: 18px;
     font-weight: 200;
+    margin:-10px 0 0 0;
 }
 
 .registration i {
@@ -166,4 +169,41 @@
 .save-profile-color {
     color:#333;
 }
+
+/* ======================================== */
+.companies .td1 {
+    width: 20%;
+}
+.companies .td1 img {
+/*  width: 100%; */
+}
+.companies .td2 {
+    width: 60%;
+    padding: 10px 0 0 20px;
+    text-align: left;
+    font-size: 15pt;
+}
+/*
+.companies .td3 {
+    width: 20%;
+    padding: 10px 0 0 20px;
+    text-align: center;
+    font-size: 16pt;
+}
+*/
+.companies .td3 input { /*
+    -ms-transform: scale(1.5);
+    -moz-transform: scale(1.5);
+    -webkit-transform: scale(1.5);
+    -o-transform: scale(1.5);
+    transform: scale(1.5); */
+}
+.pointer {
+    cursor:pointer;
+}
+
+
+
+
+
 

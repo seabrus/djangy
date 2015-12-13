@@ -8,7 +8,8 @@
         <ul class="nav nav-tabs" role="tablist">
           <li role="presentation" class="active font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Basics' ">Basics</a></li>
           <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Logo' ">Logo</a></li>
-          <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Plans' ">Subcription plans</a></li>
+          <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Hours' ">Hours</a></li>
+          <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Plans' ">Plans</a></li>
           <li role="presentation" class="font22 save-profile-bkground"><a href="" data-toggle="tab" 
                ng-click="ctrl.currentTab='SaveProfile'; ctrl.saveUserProfile( ctrl.savingResult )" 
                class="save-profile-color">Save profile</a></li> 
@@ -18,9 +19,9 @@
                   ng-submit="ctrl.currentTab='SaveProfile'; ctrl.saveUserProfile( ctrl.savingResult )" >
          <div ng-switch="ctrl.currentTab">
 
+
     <!-- TAB: Basic information -->
           <div class="registration" ng-switch-when="Basics">
-
             <div class="page-header">
               <h2>Basic information</h2> <a name="required-fields"></a>
             </div>
@@ -49,17 +50,6 @@
               </select>
             </div>
 
-         <!-- Opening hours -->
-            <label class="pointer" ng-class="ctrl.getHoursClass()" ng-click="ctrl.showHours=!ctrl.showHours">Working hours:</label>
-            <div opening-hours-directive=""></div> 
-
-         <!-- Alerts -->
-            <div class="blank">&nbsp;</div>
-            <div class="alert alert-warning" role="alert" ng-show="regForm.$dirty && regForm.$invalid">
-                <strong class="font22">&#10004;</strong> Please fill in the mandatory field(s) <a href="#required-fields">above</a>: 
-                <span ng-show="regForm.companyName.$invalid"><br>&mdash; Business name</span>
-            </div>
-
           </div>   <!-- <div class="registration"> -->
 
 
@@ -69,12 +59,25 @@
               <h2>Company logo</h2>
             </div>
 
-            <div class="text-center"><img ng-src="{{ctrl.regData.logoUrl}}" alt="Company logo"></div><br>
+            <div class="text-center">
+                <img ng-src="{{ctrl.regData.logoUrl}}" alt="Company logo">
+            </div><br>
             <input type="file" accept="image/*" name="upload-file" class="file-input" id="file-input"><br>
             <div class="text-center">            
-              <button type="submit" class="btn-lg btn-primary upload-btn" title="Upload company logo"
-                        ng-click="ctrl.uploadLogo( $event )">Upload</button>
+                <button type="submit" class="btn-lg btn-primary upload-btn" title="Upload company logo"
+                            ng-click="ctrl.uploadLogo( $event )">Upload</button>
             </div>
+          </div>
+
+
+     <!-- TAB: Hours -->
+          <div class="registration"  ng-switch-when="Hours">
+            <div class="page-header">
+              <h2>Opening hours</h2>
+            </div>
+
+            <div opening-hours-directive=""></div> 
+
           </div>
 
 

@@ -1,5 +1,26 @@
 <div class="row">
-    <div class="col-xs-8 col-xs-offset-0 col-sm-5 col-sm-offset-0 col-md-4 col-md-offset-0 col-lg-3 col-lg-offset-0">
-        <h1>Companies List</h1>
+  <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-0 col-md-8 col-md-offset-0 col-lg-6 col-lg-offset-0">
+      <h1>Companies List</h1>
+      <div ng-controller="HomeController as ctrl">
+
+        <div class="table-responsive">
+            <table class="table table-striped companies">
+                <tbody>
+                    <tr ng-repeat="company in ctrl.CompaniesData">
+                        <td class="td1"><img ng-src="{{ company.logoUrl }}"></td>
+                        <td class="td2">
+                            <b>Business name</b>: <span ng-bind-html="::company.companyName"></span><br>
+                            <b>Founded</b>: <span ng-bind-html="::company.foundedAt"></span><br>
+                            <b>Email</b>: <span ng-bind-html="::company.email"></span><br>
+                            <b>Payment method</b>: <span ng-bind-html="::company.paymentMethod"></span><br>
+                            See <a ng-href="#/details/{{::company.id}}" title="Company details">details</a><br>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+      </div>
     </div>
-</div>
+</div>   <!--   <div class="row">   -->
+

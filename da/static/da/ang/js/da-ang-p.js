@@ -26,7 +26,7 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 
 
 // Working hours timetable visibility
-	self.showHours = false;
+	self.showHours = true;
 	self.getHoursClass = function() {
         var yes = (self.showHours === false);
         return {
@@ -76,10 +76,11 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 app.factory('DataService', [ '$http', function( $http ) {
 
 	var regData = {
+        id: 1,
         companyName: '',
         foundedAt: '',
         email: '',
-        logoUrl: '/media/da/dj.png',
+        logoUrl: '/media/da/logo1.png',
         paymentMethod: 'PayPal',
         subscriptionPlan: 'Business plan',
 

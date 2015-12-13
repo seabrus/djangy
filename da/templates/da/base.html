@@ -34,7 +34,7 @@
               <li><a href="#" onclick="googleLogin();" style="cursor:pointer;" id="google_login_menu_item">Google LogIn</a></li>
               <li><a href="{% url 'rest_framework:login' %}">REST API</a></li>
             {% else %}
-              <li class="active"><a href="#/profile">Profile</a></li>
+              <li><a href="#/profile">Profile</a></li>
               <li><a href="{% url 'account_logout' %}">{{ user.username }}: &nbsp;Log Out</a></li>
             {% endif %}
           </ul>

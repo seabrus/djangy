@@ -1,0 +1,53 @@
+<div class="row">
+  <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-0 col-md-8 col-md-offset-0 col-lg-6 col-lg-offset-0">
+      <h1>Company Details</h1>
+      <div ng-controller="DetailsController as ctrl" ng-init="company=ctrl.CompanyDetailsData">
+
+        <div class="table-responsive">
+            <table class="table table-striped companies">
+                <tbody>
+                    <tr>
+                        <td class="td1"><img ng-src="{{ company.logoUrl }}"></td>
+                        <td class="td2">
+                            <b>Business name</b>: <span ng-bind-html="::company.companyName"></span><br>
+                            <b>Founded</b>: <span ng-bind-html="::company.foundedAt"></span><br>
+                            <b>Email</b>: <span ng-bind-html="::company.email"></span><br>
+                            <b>Payment method</b>: <span ng-bind-html="::company.paymentMethod"></span><br>
+                            <b>Subscription plan</b>: <span ng-bind-html="::company.subscriptionPlan"></span><br>
+                            <b>Opening hours</b>:<br>
+
+                <table class="table registration" style="margin-left:30px;">
+                  <thead>
+                    <tr>
+                      <th class="day font14pt">Day</th>
+                      <th class="from-until font15pt text-center">From </th>
+                      <th class="from-until font15pt text-center">Until </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="dayOfWeek in company.openingHours">
+                      <td ng-bind-html="dayOfWeek.dayName" class="font14pt"></td>
+                      <td colspan="4">
+                        <table class="table table-striped no-bottom">
+                          <tbody>
+                            <tr ng-repeat="hrs in dayOfWeek.hours">
+                              <td class="text-center"><span ng-bind-html="hrs.from" class="font14pt"></span></td>
+                              <td class="text-center"><span ng-bind-html="hrs.until" class="font14pt"></span></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+      </div>
+    </div>
+</div>   <!--   <div class="row">   -->
+

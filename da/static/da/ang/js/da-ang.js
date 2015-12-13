@@ -56,6 +56,11 @@ app.config(['$routeProvider', function($routeProvider) {
     controller: 'HomeController', 
   });
 
+  $routeProvider.when('/details/:id', { 
+    templateUrl: '/static/da/ang/html/details.html', 
+    controller: 'DetailsController', 
+  });
+
   $routeProvider.otherwise({ redirectTo: '/' });
 }]);
 
@@ -64,25 +69,80 @@ app.config(['$routeProvider', function($routeProvider) {
 app.controller('HomeController', [ 'CompanyListService', function( CompanyListService ) {
 	var self = this;
 
-	//self.regData = CompanyListService.getData();
+	self.CompaniesData = CompanyListService.getData();
 }]);
+
+app.controller('DetailsController', [ '$routeParams', 'CompanyDetailsService', function( $routeParams, CompanyDetailsService ) {
+	var self = this;
+
+	self.CompanyDetailsData = CompanyDetailsService.getData( $routeParams.id );
+}]);
+
 
 
 app.factory('CompanyListService', [ '$http', function( $http ) {
 
 	var CompanyListData = [ 
         {
-            companyName: '',
-            foundedAt: '',
-            email: '',
-            logoUrl: '/media/da/dj.png',
+            id: 1,
+            companyName: 'ABC',
+            foundedAt: '1970',
+            email: 'abc@abc.com',
+            logoUrl: '/media/da/logo1.png',
             paymentMethod: 'PayPal',
-            subscriptionPlan: 'Business plan',
     	}, 
+
+        {
+            id: 5,
+            companyName: 'Nokia',
+            foundedAt: '1982',
+            email: 'ccc@nokia.com',
+            logoUrl: '/media/da/logo2.jpg',
+            paymentMethod:  'Credit card',
+    	}, 
+
+        {
+            id: 12,
+            companyName: 'Colombo',
+            foundedAt: '2010',
+            email: '12@colombo.cc',
+            logoUrl: '/media/da/logo3.png',
+            paymentMethod: 'Bank transfer',
+    	}, 
+
     ];
 
     return  { 
-        getData: function() { return regData; }, 
+        getData: function() { return CompanyListData; }, 
+    };
+
+}]);
+
+
+app.factory('CompanyDetailsService', [ '$http', function( $http ) {
+
+	var CompanyDetailsData = {
+        id: 22,
+        companyName: 'ABC',
+        foundedAt: '1970',
+        email: 'abc@abc.com',
+        logoUrl: '/media/da/logo1.png',
+        paymentMethod: 'PayPal',
+        subscriptionPlan: 'Business plan',
+
+        openingHours: [
+          { dayName: 'Monday', hours: [ {from: '9:00', until: '12:30'}, {from: '14:00', until: '18:30'}, {from: '19:00', until: '23:30'} ] },
+          { dayName: 'Tuesday', hours: [ ] },
+          { dayName: 'Wednesday', hours: [ ] },
+          { dayName: 'Thursday', hours: [  {from: '9:00', until: '12:30'}, {from: '14:00', until: '18:30'}, {from: '19:00', until: '23:30'}  ] },
+          { dayName: 'Friday', hours: [ ] },
+          { dayName: 'Saturday', hours: [ ] },
+          { dayName: 'Sunday', hours: [ ] },
+        ],
+	};
+
+    return  { 
+        getData: function( id ) { return CompanyDetailsData; }, 
     };
 
 }]);
