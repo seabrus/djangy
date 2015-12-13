@@ -12,6 +12,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'da/css/da.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'da/ang/css/da-ang.css' %}">
     <link rel="icon" href="{% static 'da/favicon.ico' %}">
+
+    <!-- <base href="/">    It's necessary for html5Mode( true ) -->
+
 </head>
 <body ng-app="djangy">
 
@@ -27,14 +30,14 @@
           </button>
           <a class="navbar-brand" href="#/">Djangy</a>
         </div>
-        <div id="navbar" class="navbar-collapse collapse">
+        <div id="navbar" class="navbar-collapse collapse"  ng-controller="MainController as mc">
           <ul class="nav navbar-nav">
             {% if not user.is_authenticated %}
               <li class="active"><a href="{% url 'account_login' %}?next={{request.path}}">Log In</a></li>
               <li><a href="#" onclick="googleLogin();" style="cursor:pointer;" id="google_login_menu_item">Google LogIn</a></li>
               <li><a href="{% url 'rest_framework:login' %}">REST API</a></li>
             {% else %}
-              <li><a href="#/profile">Profile</a></li>
+              <li ng-class="mc.getClass( '/profile' )"><a href="#/profile">Profile</a></li>
               <li><a href="{% url 'account_logout' %}">{{ user.username }}: &nbsp;Log Out</a></li>
             {% endif %}
           </ul>

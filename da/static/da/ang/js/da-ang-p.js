@@ -3,6 +3,7 @@ app.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/profile', { 
     templateUrl: '/static/da/ang/html/profile.html', 
     controller: 'ProfileController', 
+    routeName: 'profile',
   });
 
 }]);
@@ -238,30 +239,5 @@ app.directive('openingHoursDirective', [ function() {
 //var xhr = new XMLHttpRequest();
 //xhr.open("POST", '/upload-records-archive' );
 //xhr.send( file );
-/*      HTTP.call( "POST", '/upload-records-archive',
-            {
-                data: file,
-                headers: {
-                    'Content-Type': 'application/x-gzip',
-                    'Content-Length': file.size,
-                    'X-File-Name': file.name,
-                    'X-File-Size': file.size
-                },
-                //beforeSend: function(xhr){
-                    //xhr.setRequestHeader('Content-Type', 'application/x-gzip');
-                    //xhr.setRequestHeader('Cache-Control', 'no-cache');
-                    //xhr.setRequestHeader('X-File-Name', file.name);
-                    //xhr.setRequestHeader('X-File-Size', file.size);
-                //},
-            },
-            function (error, result) {
-                if (error) {
-                  alert( "HTTP error" );
-                }
-                if (!error) {
-                  alert( "HTTP success" );
-                }
-        });
-*/
 //    },
 
