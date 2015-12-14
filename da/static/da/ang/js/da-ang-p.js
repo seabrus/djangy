@@ -9,28 +9,31 @@ app.config(['$routeProvider', function($routeProvider) {
 }]);
 
 
+// =============================================================================
+//   Controllers
+// =============================================================================
 app.controller('ProfileController', [ 'DataService', function( DataService ) {
 	var self = this;
 
-// Application data initialization
+  // Application data initialization
 	self.regData = DataService.getData();
     self.paymentMethods = DataService.getPaymentMethods();
     self.subscriptionPlans = DataService.getSubscriptionPlans();
 
-// Tab selection
+  // Tab selection
     self.currentTab = "Basics";
 
-// Upload logo
+  // Upload logo
     self.uploadLogo = DataService.uploadLogo;
 
-// User profile data saving
+  // User profile data saving
     self.savingResult = [ '' ];   // 'success' or 'error'
     self.saveUserProfile = function( result ) { DataService.saveUserProfileData( result ); };
 
 
-//===============================================
-//     Add / Delete time spans
-//===============================================
+  //===============================================
+  //     Add / Delete time spans
+  //===============================================
 	self.addTimeSpan = function( dayName, tsFrom, tsUntil ) {
         // Find the active day of the week
 		for ( var i=0, len1=self.regData.openingHours.length; i<len1; i++ )
@@ -66,6 +69,9 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 }]);
 
 
+// =============================================================================
+//   Services
+// =============================================================================
 app.factory('DataService', [ '$http', function( $http ) {
 
 	var regData = {
@@ -100,7 +106,7 @@ app.factory('DataService', [ '$http', function( $http ) {
         companyName: '',
         foundedAt: '',
         email: '',
-        logoUrl: '/media/da/logo1.png',
+        logoUrl:  '/media/da/logo2.jpg',
         paymentMethod: 'PayPal',
         subscriptionPlan: 'Business plan',
         hours: [
@@ -120,6 +126,10 @@ app.factory('DataService', [ '$http', function( $http ) {
 
 
     return  { 
+        getData0: function() { 
+            return regData;
+        },
+
         getData: function() { 
             var commonParams = [ 'id', 'companyName', 'foundedAt', 'email', 'logoUrl', 'paymentMethod', 'subscriptionPlan' ];
             for (var k=0, len=commonParams.length; k < len; k++) {
@@ -152,30 +162,14 @@ app.factory('DataService', [ '$http', function( $http ) {
                 .error( function() { result[0] = 'error'; } );
         },
 
-        uploadLogo: function( e ) { 
-            e.preventDefault();
-
-            var files = $( '#file-input' ).get(0).files;
-            if ( files.length === 0) {
-                alert( 'No file found: Please select a file' );
-                return false;
-            }
-
-            var file = files[0];
-            if ( file.type !== 'image/png'  &&  file.type !== 'image/gif'  &&  file.type !== 'image/jpeg' ) {
-                alert( 'The file should be an image. Please select a *.PNG, *.GIF, or *.JPG file' );
-                return false;
-            }
-
-            e.stopPropagation();
-            return ; 
-        },
-
     };
 
 }]);
 
 
+// =============================================================================
+//   Directives
+// =============================================================================
 app.directive('openingHoursDirective', [ function() {
     return {
                 templateUrl: '/static/da/ang/html/working-hours.html',
@@ -184,8 +178,82 @@ app.directive('openingHoursDirective', [ function() {
 }]);
 
 
+app.directive('previewImage', [ function() {
+    return {
+                restrict: 'A',
+                scope: {
+                    //url: '=imageUrl',
+                },
+                transclude: true,
+                template: '<div class="text-center"><img ng-src="{{ ctrl.logoUrl }}" alt="Company logo" id="preview-img"></div><div ng-transclude></div>',
+                controller: ['$scope', function($scope) {
+                    this.scope = $scope;
+                    this.logoUrl = '/media/da/logo-dummy.png';
+                }],
+                controllerAs: 'ctrl',
+   };
+}]);
+
+app.directive('checkImage', [ function() {
+    return {
+                restrict: 'A',
+                require: '^previewImage',
+                link: function($scope, $elem, $attrs, ctrl) {
+
+                    $elem.on('change', function( e ) {
+                        e.preventDefault();
+
+                    // Sanity checks
+                        var files = $elem.get(0).files;
+                        if ( files.length === 0) {
+                            alert( 'No file found: Please select a file' );
+                            return false;
+                        }
+
+                        var file = files[0];
+                        if ( file.type !== 'image/png'  &&  file.type !== 'image/gif'  &&  file.type !== 'image/jpeg' ) {
+                            resetImage( 'The file should be an image. Please select a *.PNG, *.GIF, or *.JPG file' );
+                            return false;
+                        }
+                        if ( file.size > 100000) {
+                            resetImage( 'The file is too large. Please select a file less than 100Kb in size'  );
+                            return false;
+                        }
+
+                    // Image preview
+                        var reader = new FileReader();
+                        reader.onload = function( e ) {
+                            ctrl.scope.$apply( function() {
+                                ctrl.logoUrl = reader.result;
+                                //ctrl.scope.url = reader.result;
+                            });
+                        };
+                        reader.readAsDataURL(file);
+
+                        e.stopPropagation();
+                        return; 
+
+
+                        function resetImage( errorText ) {
+                            alert( errorText );
+                            $elem.val(''); //http://webtips.krajee.com/clear-html-file-input-value-ie-using-javascript/ -but there are some errors
+                            ctrl.scope.$apply( function() {
+                                ctrl.logoUrl = '/media/da/logo-dummy.png';
+                            });
+                        }
+                    });   // end of "$elem.on('change',..."
+
+
+                },   // end of "link:..."
+   };
+}]);
+
+
+
+
+
+
 /*
-// Uploading user's records archive and adding records to DB
     'click .upload-btn': function (e) {
         e.preventDefault();
 
@@ -220,11 +288,6 @@ app.directive('openingHoursDirective', [ function() {
 	                'X-File-Checksum': result,
 	                'Cache-Control': 'no-cache',
 	            },
-	            //beforeSend: function( xhr, settings ) {
-	            //    xhr.setRequestHeader( 'Cache-Control', 'no-cache' );
-	            //    xhr.setRequestHeader( 'X-File-Name', file.name );
-	            //    xhr.setRequestHeader( 'X-File-Size', file.size );
-	            //},
 	            dataType: 'text',
 	            success: Meteor.bindEnvironment( function() {   // data, textStatus, xhr       // - this works without Meteor.bindEnvironment too. 
 	                                alert( 'Records archive is uploaded successfully!' );                   //  But it was not be tested under numerous users 
@@ -233,9 +296,8 @@ app.directive('openingHoursDirective', [ function() {
 	                                alert( xhr.responseText );   // xhr.status
 	                            }),
 	        });
-        });     // end of "Meteor.call( 'checkFile'... "
+        });
 */
-
 //var xhr = new XMLHttpRequest();
 //xhr.open("POST", '/upload-records-archive' );
 //xhr.send( file );
