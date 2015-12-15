@@ -79,9 +79,12 @@ app.factory('DataService', [ '$http', function( $http ) {
         companyName: '',
         foundedAt: '',
         email: '',
-        logoUrl: '',
         paymentMethod: '',
         subscriptionPlan: '',
+
+        logoUrl: '',   // the current logo from DB on the server
+        newLogoFile: undefined,
+        previewUrl: '/media/da/logo-dummy.png',
 
         openingHours: [
           { dayName: 'Monday', hours: [ ] },
@@ -131,7 +134,7 @@ app.factory('DataService', [ '$http', function( $http ) {
         },
 
         getData: function() { 
-            var commonParams = [ 'id', 'companyName', 'foundedAt', 'email', 'logoUrl', 'paymentMethod', 'subscriptionPlan' ];
+            var commonParams = [ 'id', 'companyName', 'foundedAt', 'email', 'paymentMethod', 'subscriptionPlan', 'logoUrl' ];
             for (var k=0, len=commonParams.length; k < len; k++) {
                 regData[ commonParams[k] ] = dbData[ commonParams[k] ];
             }
@@ -172,8 +175,8 @@ app.factory('DataService', [ '$http', function( $http ) {
 // =============================================================================
 app.directive('openingHoursDirective', [ function() {
     return {
+                restrict: 'A',
                 templateUrl: '/static/da/ang/html/working-hours.html',
-                restrict: 'A'
    };
 }]);
 
@@ -182,13 +185,14 @@ app.directive('previewImage', [ function() {
     return {
                 restrict: 'A',
                 scope: {
-                    //url: '=imageUrl',
+                    url: '=previewUrl',
                 },
                 transclude: true,
-                template: '<div class="text-center"><img ng-src="{{ ctrl.logoUrl }}" alt="Company logo" id="preview-img"></div><div ng-transclude></div>',
+                template: '<div class="text-center"><img ng-src="{{ url }}" alt="Company logo" id="preview-img"></div><div ng-transclude></div>',
                 controller: ['$scope', function($scope) {
                     this.scope = $scope;
-                    this.logoUrl = '/media/da/logo-dummy.png';
+                    //$scope.url = this.logoUrl;
+                    //this.logoUrl = '/media/da/logo-dummy.png';
                 }],
                 controllerAs: 'ctrl',
    };
@@ -197,12 +201,14 @@ app.directive('previewImage', [ function() {
 app.directive('checkImage', [ function() {
     return {
                 restrict: 'A',
+                scope: {
+                    imgFile: '=newLogoFile',
+                },
                 require: '^previewImage',
                 link: function($scope, $elem, $attrs, ctrl) {
 
                     $elem.on('change', function( e ) {
                         e.preventDefault();
-
                     // Sanity checks
                         var files = $elem.get(0).files;
                         if ( files.length === 0) {
@@ -212,39 +218,50 @@ app.directive('checkImage', [ function() {
 
                         var file = files[0];
                         if ( file.type !== 'image/png'  &&  file.type !== 'image/gif'  &&  file.type !== 'image/jpeg' ) {
-                            resetImage( 'The file should be an image. Please select a *.PNG, *.GIF, or *.JPG file' );
+                            resetImage( true, 'The file should be an image. Please select a *.PNG, *.GIF, or *.JPG file' );
                             return false;
                         }
                         if ( file.size > 100000) {
-                            resetImage( 'The file is too large. Please select a file less than 100Kb in size'  );
+                            resetImage( true, 'The file is too large. Please select a file less than 100Kb in size'  );
                             return false;
                         }
 
-                    // Image preview
+                    // Preview image url
                         var reader = new FileReader();
                         reader.onload = function( e ) {
                             ctrl.scope.$apply( function() {
-                                ctrl.logoUrl = reader.result;
-                                //ctrl.scope.url = reader.result;
+                                ctrl.scope.url = e.target.result;
+                                //ctrl.logoUrl = reader.result;
                             });
                         };
                         reader.readAsDataURL(file);
 
+                    // Save the image file on the client
+                       $scope.imgFile = file;
+
                         e.stopPropagation();
                         return; 
-
-
-                        function resetImage( errorText ) {
-                            alert( errorText );
-                            $elem.val(''); //http://webtips.krajee.com/clear-html-file-input-value-ie-using-javascript/ -but there are some errors
-                            ctrl.scope.$apply( function() {
-                                ctrl.logoUrl = '/media/da/logo-dummy.png';
-                            });
-                        }
                     });   // end of "$elem.on('change',..."
 
 
-                },   // end of "link:..."
+                    $scope.$on('CANCEL_IMAGE_SELECTION', function() {
+                        resetImage( false );                            
+                    });
+
+
+                    function resetImage( needAlert, errorText ) {
+                        if ( needAlert ) {
+                            alert( errorText );
+                        }
+                        $elem.val('');   //http://webtips.krajee.com/clear-html-file-input-value-ie-using-javascript/ -but there are some errors
+                        $scope.imgFile = undefined;
+                        ctrl.scope.url = '/media/da/logo-dummy.png';
+                        if ( needAlert ) {
+                            ctrl.scope.$apply();
+                            //ctrl.logoUrl = '/media/da/logo-dummy.png';
+                        }
+                    }
+                },   // end of "link: ..."
    };
 }]);
 

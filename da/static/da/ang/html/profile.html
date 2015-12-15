@@ -62,6 +62,7 @@
               <h2>Company logo</h2>
             </div>
 
+            <!-- Current logo displaying, if exists -->
             <div ng-show="ctrl.regData.logoUrl != '' ">
                 <h3>Current logo:</h3>
                 <div class="text-center">
@@ -73,17 +74,15 @@
             <h3><span ng-hide="ctrl.regData.logoUrl != '' ">Add</span><span ng-show="ctrl.regData.logoUrl != '' ">Change</span> 
                   the logo<span ng-show="ctrl.regData.logoUrl != '' ">, if necessary</span>:</h3>
 
-            <div preview-image >   <!-- <div preview-image image-url="ctrl.regData.logoUrl" > -->
+            <!-- Component to select and preview a new logo -->
+            <div preview-image preview-url="ctrl.regData.previewUrl" >
                 <br>
                 <input type="file" accept="image/*" name="upload-logo" class="file-input" id="logo-file-input"
-                         check-image >
+                         check-image new-logo-file="ctrl.regData.newLogoFile" >
             </div>
             <div class="text-center"><br>
-                  <button type="button" class="btn btn-default cancel-btn"
-                              ng-click="ctrl.cancelLogo( $event )">Cancel</button> 
-                  &nbsp;&nbsp;
-                  <button type="button" class="btn btn-primary change-btn"
-                              ng-click="ctrl.uploadLogo( $event )">Change</button>
+                  <button type="button" class="btn btn-default"
+                    ng-click="$broadcast('CANCEL_IMAGE_SELECTION')">Cancel</button> 
             </div>
 
           </div>
