@@ -26,10 +26,14 @@
               <h2>Basic information</h2> <a name="required-fields"></a>
             </div>
 
-            <div class="form-group" style="margin-left:0px;">
+            <div class="form-group" style="margin-left:0px;"
+                   ng-init="visited1=false" 
+                   ng-class="{'has-error': regForm.companyName.$dirty && regForm.companyName.$invalid && visited1}" >
               <label for="companyName"><i>*</i> Business name:</label>
               <input type="text" id="companyName" name="companyName" required=""
-                         ng-model="ctrl.regData.companyName" class="form-control" > ​
+                         ng-maxlength="50" ng-pattern="/^[\w\s\-\.\,\.\/]{1,50}$/"
+                         ng-model="ctrl.regData.companyName" class="form-control" 
+                         ng-blur="visited1=true" >
             </div>
 
             <div class="form-group" ng-class="{'has-error': regForm.foundedAt.$dirty && regForm.foundedAt.$invalid}" 

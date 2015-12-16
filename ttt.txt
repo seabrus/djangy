@@ -1,0 +1,1 @@
+Requirement already up-to-date: pillow==2.6.1 in /usr/local/lib/python2.7/dist-packages
