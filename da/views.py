@@ -10,8 +10,38 @@ class GoogleLogin(SocialLoginView):
 
 
 """
+   other views
 """
 from django.shortcuts import render
+
+from rest_framework import generics
+from rest_framework import permissions
+
+from . models import Company, OpeningHours
+from . serializers import CompanySerializer, OpeningHoursSerializer
+from . permissions import IsOwner
+
+
+class CompanyList(generics.ListAPIView):
+    queryset = Company.objects.all()
+    serializer_class = CompanySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+class HoursList(generics.ListAPIView):
+    queryset = OpeningHours.objects.all()
+    serializer_class = OpeningHoursSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+
+
+
+
+
+
+
+
+
 
 
 

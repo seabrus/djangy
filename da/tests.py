@@ -26,8 +26,8 @@ def create_company():
     company_name = 'ABCDE'
     founded_at = '2011'
     email = 'abcde@cc.com'
-    payment_method = 'Bank'
-    subscription_plan = 'Advanced'
+    payment_method = 'PayPal'
+    subscription_plan = 'Advanced plan'
 
     f = open(settings.MEDIA_ROOT + 'test/ppp.png')
     logo_img = File( f )
