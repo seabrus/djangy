@@ -11,6 +11,10 @@ class OpeningHoursSerializer(serializers.ModelSerializer):
         fields = ('id', 'day_name', 'from_time', 'until_time', 'db_id', ) 
 
 
+class HoursListSerializer(serializers.ListSerializer):
+    pass
+
+
 class CompanySerializer(serializers.ModelSerializer):
     hours = OpeningHoursSerializer( many=True )     # similar to: openinghours_set = OpeningHoursSerializer( many=True ), see models.py
     logo_url = serializers.ReadOnlyField( source='logo_img.url' )     # CharField(read_only=True)
@@ -21,7 +25,14 @@ class CompanySerializer(serializers.ModelSerializer):
                       'logo_url', 'logo_img', 
                       'hours', 
                     )
+        list_serializer_class = HoursListSerializer
 
+    def create(self, validated_data):
+        hours_data = validated_data.pop('hours')
+        company = Company.objects.create(**validated_data)
+        if len(hours_data) != 0:
+            OpeningHours.objects.create(company=company, **hours_data)
+        return company
 
 
 """

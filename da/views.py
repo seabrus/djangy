@@ -35,7 +35,6 @@ class HoursList(generics.ListAPIView):
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
 from rest_framework import status
 
 NEW_COMPANY = 'NEW COMPANY'
@@ -57,7 +56,23 @@ class CompanyProfile(APIView):
         serializer = CompanySerializer(company)
         return Response(serializer.data)
 
+    def post(self, request, format=None):
+        company = self.get_company(request)
+        if company == NEW_COMPANY:
+            serializer = CompanySerializer(data=request.data)
+        else:
+            serializer = CompanySerializer(company, data=request.data)
+        if serializer.is_valid():
+            serializer.save(manager=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, format=None):
+        company = self.get_company(request)
+        if company != NEW_COMPANY:
+            company.logo_img.delete(save=False)
+            company.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 
