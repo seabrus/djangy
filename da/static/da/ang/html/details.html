@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-0 col-md-8 col-md-offset-0 col-lg-6 col-lg-offset-0">
       <h1>Company Details</h1>
-      <div ng-controller="DetailsController as ctrl" ng-init="company=ctrl.CompanyDetailsData">
+      <div ng-init="company=ctrl.CompanyDetailsData"> <!-- NO ng-controller="DetailsController as ctrl" -- DON'T repeat ngRouteProvider! -->
 
         <div class="table-responsive">
             <table class="table table-striped companies">
