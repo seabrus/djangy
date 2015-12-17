@@ -12,7 +12,7 @@ class OpeningHoursSerializer(serializers.ModelSerializer):
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    hours = OpeningHoursSerializer( many=True )     # equal to: openinghours_set = OpeningHoursSerializer( many=True )
+    hours = OpeningHoursSerializer( many=True )     # similar to: openinghours_set = OpeningHoursSerializer( many=True ), see models.py
     logo_url = serializers.ReadOnlyField( source='logo_img.url' )     # CharField(read_only=True)
 
     class Meta:

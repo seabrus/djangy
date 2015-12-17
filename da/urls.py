@@ -9,8 +9,8 @@ from . views import CompanyList, HoursList
 urlpatterns = [
 
     #url(r'^profile/$', login_required(TemplateView.as_view(template_name='da/ang/profile.html'), login_url='/accounts/login/'), name='da_profile'),
-    url(r'^companies/$', CompanyList.as_view(), name='da_company_list'),
-    url(r'^hours/$', HoursList.as_view(), name='da_hours_list'),
+    url(r'^companies/$', CompanyList.as_view(), name='company_list'),
+    url(r'^hours/$', HoursList.as_view(), name='hours_list'),
     url(r'^$', TemplateView.as_view(template_name='da/base.html'), name='da_base'),
 
 ]

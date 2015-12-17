@@ -2,10 +2,10 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.core.files import File
 
-from . models import Company, OpeningHours
+from da.models import Company, OpeningHours
 
 def create_data():
-    manager = User.objects.get( username='sean22' )
+    manager = User.objects.get( username='seanBr' )
 
     company_name = 'Cordova'
     founded_at = '1977'

@@ -11,8 +11,10 @@ class InitialTest(TestCase):
 from django.contrib.auth.models import User 
 from django.conf import settings
 from django.core.files import File
+from django.core.urlresolvers import reverse
 
 from . models import Company, OpeningHours
+from . views import CompanyList, HoursList
 
 # ====================================================================
 #   Auxiliary functions
@@ -83,6 +85,8 @@ def create_hours():
 # ====================================================================
 #   Tests
 # ====================================================================
+
+#DB tests
 class DbTest(TestCase):
     def test_models_creation(self):
         create_user()
@@ -100,6 +104,58 @@ class DbTest(TestCase):
         #print 'Opening hours =', len(company.openinghours_set.all())
 
         self.fail('Success: Finish  test_models_creation  successfully')
+
+
+# '/companies/' view and json tests -- 'da:company_list'
+class CompaniesAPITest(TestCase):
+    #fixtures = ['mammals.json', 'birds']
+
+    @classmethod   # https://docs.djangoproject.com/en/1.8/topics/testing/tools/#django.test.TestCase.setUpTestData, new from v. 1.8
+    def setUpTestData(cls):
+        create_user()
+        create_company()
+        create_hours()
+
+    @classmethod
+    def tearDownClass(cls):
+        logo_image = Company.objects.all()[0].logo_img
+        logo_image.delete()
+        super(CompaniesAPITest, cls).tearDownClass()   # Call parent last
+
+
+    def test_url_resolves_to_correct_view(self):
+        response = self.client.get(reverse('da:company_list'))
+        self.assertEqual(response.resolver_match.func.__name__, CompanyList.as_view().__name__)
+        self.fail('Success 1:  test_url_resolves_to_correct_view  is passed')
+
+    def test_response_has_correct_json(self):
+        response = self.client.get('/companies/?format=json')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'founded_at')
+        self.assertContains(response, 'ABCDE')
+        self.fail('Success 2:  test_response_has_correct_json  is passed')
+
+    def test_response_has_correct_html(self):
+        response = self.client.get('/companies/')
+        #print response
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'company_name')
+        self.assertContains(response, 'ABCDE')
+        self.fail('Success 3:  test_response_has_correct_html  is passed')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

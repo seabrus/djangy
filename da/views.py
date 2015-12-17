@@ -19,7 +19,7 @@ from rest_framework import permissions
 
 from . models import Company, OpeningHours
 from . serializers import CompanySerializer, OpeningHoursSerializer
-from . permissions import IsOwner
+from . permissions import IsManager
 
 
 class CompanyList(generics.ListAPIView):

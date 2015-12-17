@@ -18,7 +18,7 @@ class Company(models.Model):
 class OpeningHours(models.Model):
     DAY_CHOICES = ( 
         ('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'),
-        ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'), ('Sunday', 'Sunday')
+        ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday'), ('Sunday', 'Sunday'),
     ) 
 
     company = models.ForeignKey(Company, related_name='hours')     # related_name='hours' is required for CompanySerializer 
@@ -27,7 +27,7 @@ class OpeningHours(models.Model):
     until_time = models.CharField(max_length=5)
 
     def __unicode__(self):
-        return 'from ' + self.from_time + ', until ' + self.until_time
+        return '%s: from %s until %s' % (self.day_name, self.from_time, self.until_time,)
 
 
 
