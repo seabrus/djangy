@@ -2,7 +2,7 @@
   <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-0 col-md-8 col-md-offset-0 col-lg-6 col-lg-offset-0">
     <h2>Your Company Profile</h2>
 
-      <div ng-controller="ProfileController as ctrl">
+      <div>     <!--  NO   ng-controller="ProfileController as ctrl" -->
 
 <!-- Tabs selector -->
         <ul class="nav nav-tabs" role="tablist">
@@ -39,8 +39,8 @@
             <div class="form-group" ng-class="{'has-error': regForm.foundedAt.$dirty && regForm.foundedAt.$invalid}" 
                    style="margin-left:0px;">
               <label for="foundedAt"><i>*</i> Founded at:</label>
-              <input type="number" id="foundedAt" name="foundedAt" required=""
-                         placeholder="2000" min="1700" max="2020"
+              <input type="text" id="foundedAt" name="foundedAt" required=""
+                         placeholder="2000" ng-pattern="/^[\d]{4}$/"
                         ng-model="ctrl.regData.foundedAt" class="form-control">​
             </div>
 
@@ -139,9 +139,9 @@
         </div> <!-- ng-switch -->
 
     <!-- Submit button -->
-          <div class="save-button">
+          <!-- <div class="save-button">
             <input type="submit" class="btn btn-success btn-lg" value="Save" ng-disabled="regForm.$invalid">
-          </div>
+          </div> -->
 
         </form>
       </div>

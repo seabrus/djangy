@@ -33,11 +33,29 @@ class HoursList(generics.ListAPIView):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
+from rest_framework import status
+
+NEW_COMPANY = 'NEW COMPANY'
 
 
+class CompanyProfile(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsManager, )
 
+    def get_company(self, request):
+        try:
+            return Company.objects.get(manager=request.user)
+        except Company.DoesNotExist:
+            return NEW_COMPANY
 
-
+    def get(self, request, format=None):
+        company = self.get_company(request)
+        if company == NEW_COMPANY:
+            return Response( {'is_new': True} )
+        serializer = CompanySerializer(company)
+        return Response(serializer.data)
 
 
 

@@ -102,7 +102,7 @@ app.controller('HomeController', [ 'CompanyListService', function( CompanyListSe
         .catch( function() {
             self.CompaniesData = [];
             if ( window.console ) { 
-                console.log('getListData: Error when transferring data');
+                console.log('HomeController: Error when getting data');
             }
         });
 }]);

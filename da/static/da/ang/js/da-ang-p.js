@@ -3,6 +3,7 @@ app.config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/profile', { 
     templateUrl: '/static/da/ang/html/profile.html', 
     controller: 'ProfileController', 
+    controllerAs: 'ctrl',
     routeName: 'profile',
   });
 
@@ -16,15 +17,24 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 	var self = this;
 
   // Application data initialization
-	self.regData = DataService.getData();
+	// self.regData
+    DataService.getData()
+        .then( function(response) {  
+            self.regData = response.data;
+            return 1;
+        })
+        .catch( function() {
+            self.regData = [];
+            if ( window.console ) { 
+                console.log('ProfileController: Error when GETting data');
+            }
+        });
+
     self.paymentMethods = DataService.getPaymentMethods();
     self.subscriptionPlans = DataService.getSubscriptionPlans();
 
-  // Tab selection
+  // Tab selection initialization
     self.currentTab = "Basics";
-
-  // Upload logo
-    self.uploadLogo = DataService.uploadLogo;
 
   // User profile data saving
     self.savingResult = [ '' ];   // 'success' or 'error'
@@ -74,29 +84,7 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 // =============================================================================
 app.factory('DataService', [ '$http', function( $http ) {
 
-	var regData = {
-        id: 0,
-        companyName: '',
-        foundedAt: '',
-        email: '',
-        paymentMethod: '',
-        subscriptionPlan: '',
-
-        logoUrl: '',   // the current logo from DB on the server
-        newLogoFile: undefined,
-        previewUrl: '/media/da/logo-dummy.png',
-
-        openingHours: [
-          { dayName: 'Monday', hours: [ ] },
-          { dayName: 'Tuesday', hours: [ ] },
-          { dayName: 'Wednesday', hours: [ ] },
-          { dayName: 'Thursday', hours: [ ] },
-          { dayName: 'Friday', hours: [ ] },
-          { dayName: 'Saturday', hours: [ ] },
-          { dayName: 'Sunday', hours: [ ] },
-        ],
-	};
-
+	var regData = {};
     var paymentMethods = [ 'Bank transfer', 'PayPal', 'Credit card' ];
     var subscriptionPlans = [ 
         { name: 'Basic plan', style: 'panel-default', description: 'A plan just to test the service' }, 
@@ -104,7 +92,8 @@ app.factory('DataService', [ '$http', function( $http ) {
         { name: 'Advanced plan', style: 'panel-info', description: 'A plan for corporate networks' } 
     ];
 
-	var dbData = {
+	var dbData = {};
+/* {
         id: 1,
         companyName: '',
         foundedAt: '',
@@ -114,18 +103,87 @@ app.factory('DataService', [ '$http', function( $http ) {
         subscriptionPlan: 'Business plan',
         hours: [
           { dayName: 'Monday', from: '9:00', until: '12:30', db_id: 11 },
-          { dayName: 'Tuesday', from: '9:00', until: '12:30', db_id: 21 },
-          { dayName: 'Tuesday', from: '19:00', until: '23:30', db_id: 22 },
-          { dayName: 'Wednesday', from: '', until: '', db_id: 30 },
-          { dayName: 'Sunday', from: '12:00', until: '13:30', db_id: 79 },
-          { dayName: 'Thursday', from: '14:00', until: '18:00', db_id: 45 },
-          { dayName: 'Monday', from: '14:00', until: '16:30', db_id: 12 },
-          { dayName: 'Friday', from: '14:00', until: '16:30', db_id: 55 },
-          { dayName: 'Saturday', from: '14:00', until: '16:30', db_id: 62 },
-          { dayName: 'Monday', from: '19:00', until: '23:30', db_id: 15 },
-          { dayName: 'Sunday', from: '19:00', until: '23:30', db_id: 77 },
         ],
 	};
+*/
+
+    // Conform DB and client-side data structures and properties names
+    function prepareData(data) {
+        regData = {
+            id: 0,
+            companyName: '',
+            foundedAt: '',
+            email: '',
+            paymentMethod: '',
+            subscriptionPlan: '',
+            logoUrl: '',   // the current logo from DB on the server
+            newLogoFile: undefined,
+            previewUrl: '/media/da/logo-dummy.png',
+            openingHours: [
+                { dayName: 'Monday', hours: [] },
+                { dayName: 'Tuesday', hours: [] },
+                { dayName: 'Wednesday', hours: [] },
+                { dayName: 'Thursday', hours: [] },
+                { dayName: 'Friday', hours: [] },
+                { dayName: 'Saturday', hours: [] },
+                { dayName: 'Sunday', hours: [] },
+            ],
+       	};
+
+        // New company profile
+        if ( data['is_new'] == true ) {
+            return regData;
+        }
+
+        // Existing company profile
+        // Initial data (python-style named data) => dbData (javascript-style named data)
+        var dbProps  = [ "id", "company_name", "founded_at", "email", "payment_method", "subscription_plan", "logo_url", ];
+        var angProps = [ "id", "companyName", "foundedAt", "email", "paymentMethod", "subscriptionPlan", "logoUrl", ];
+        var dbHoursPr  = [ "id", "day_name", "from_time", "until_time", "db_id", ];
+        var angHoursPr = [ "id", 'dayName', 'from', 'until', 'db_id', ];
+
+        dbData = {};
+
+        for (var n=0, len1=dbProps.length; n<len1; n++ ) {
+            dbData[ angProps[n] ] = data[ dbProps[n] ]; 
+        }
+
+        dbData['hours'] = [];
+        for (var m=0, len2=data['hours'].length; m<len2; m++ ) {
+            var hourItem = {};
+
+            for (var p=0, len3=dbHoursPr.length; p<len3; p++ ) {
+                hourItem[ angHoursPr[p] ] = data['hours'][ m ][ dbHoursPr[p] ]; 
+            }
+            dbData['hours'].push( hourItem );
+        }
+
+        data = {};
+
+        // dbData (javascript-style named data) => regData (convenient for displaying in the view)
+        var commonParams = [ 'id', 'companyName', 'foundedAt', 'email', 'paymentMethod', 'subscriptionPlan', 'logoUrl' ];
+        for (var k=0, len=commonParams.length; k < len; k++) {
+            regData[ commonParams[k] ] = dbData[ commonParams[k] ];
+        }
+
+        var days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+        for (var k=0; k < 7; k++) {
+            regData.openingHours[ k ].hours = []; regData.openingHours
+            for (var j=0, len=dbData.hours.length; j < len; j++) {
+                 if ( dbData.hours[ j ].dayName === days[k] ) {
+                    var times ={};
+                    times.from = dbData.hours[ j ].from;
+                    times.until = dbData.hours[ j ].until;
+                    times.db_id = dbData.hours[ j ].db_id;
+
+                    regData.openingHours[ k ].hours.push( times );
+                }
+            }
+        }
+
+        return regData;
+    }   // end of "function prepareData(data) ..."
+
 
 
     return  { 
@@ -134,26 +192,13 @@ app.factory('DataService', [ '$http', function( $http ) {
         },
 
         getData: function() { 
-            var commonParams = [ 'id', 'companyName', 'foundedAt', 'email', 'paymentMethod', 'subscriptionPlan', 'logoUrl' ];
-            for (var k=0, len=commonParams.length; k < len; k++) {
-                regData[ commonParams[k] ] = dbData[ commonParams[k] ];
-            }
-
-            var days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
-            for (var k=0; k < 7; k++) {
-                regData.openingHours[ k ].hours = [];
-                for (var j=0, len=dbData.hours.length; j < len; j++) {
-                    if ( dbData.hours[ j ].dayName === days[k] ) {
-                        var times ={};
-                        times.from = dbData.hours[ j ].from;
-                        times.until = dbData.hours[ j ].until;
-                        times.db_id = dbData.hours[ j ].db_id;
-                        regData.openingHours[ k ].hours.push( times );
-                    }
-                }
-            }
-
-            return regData;
+            url = '/company-profile/';
+            return $http({
+                method: 'GET',
+                url: url,
+                responseType: 'json',
+                transformResponse: prepareData, 
+            });
         },
 
         getPaymentMethods: function() { return paymentMethods; }, 
@@ -168,6 +213,7 @@ app.factory('DataService', [ '$http', function( $http ) {
     };
 
 }]);
+
 
 
 // =============================================================================
@@ -266,31 +312,7 @@ app.directive('checkImage', [ function() {
 }]);
 
 
-
-
-
-
 /*
-    'click .upload-btn': function (e) {
-        e.preventDefault();
-
-        var files = $( '#file-input' ).get(0).files;
-        if ( files.length === 0) {
-            alert( 'No file found: Please select a file' );
-            return false;
-        }
-
-        var file = files[0];
-        if ( file.type !== 'application/gzip'  &&  file.type !== 'application/x-gzip' ) {
-            alert( 'The file should be a gzip archive: Please select another file' );
-            return false;
-        }
-
-        Meteor.call( 'checkFile', function( error, result ) {
-            if ( error )  {
-                return alert( error.reason );
-            }
-
 	        $.ajax({
 	            url: '/upload-records-archive',
 	            type: 'POST',
@@ -306,17 +328,14 @@ app.directive('checkImage', [ function() {
 	                'Cache-Control': 'no-cache',
 	            },
 	            dataType: 'text',
-	            success: Meteor.bindEnvironment( function() {   // data, textStatus, xhr       // - this works without Meteor.bindEnvironment too. 
-	                                alert( 'Records archive is uploaded successfully!' );                   //  But it was not be tested under numerous users 
-	                            }),                                                                                                     // connections!
+	            success: Meteor.bindEnvironment( function() {   // data, textStatus, xhr
+	                                alert( 'Records archive is uploaded successfully!' );
+	                            }),
 	            error:       Meteor.bindEnvironment( function( xhr, textStatus, errorThrown ) {
 	                                alert( xhr.responseText );   // xhr.status
 	                            }),
 	        });
         });
+    },
 */
-//var xhr = new XMLHttpRequest();
-//xhr.open("POST", '/upload-records-archive' );
-//xhr.send( file );
-//    },
 
