@@ -9,6 +9,10 @@ app.config(['$routeProvider', function($routeProvider) {
 
 }]);
 
+// URL for GET and POST requests for a company profile
+app.value( 'COMPANY_PROFILE_URL', '/company-profile/' );
+
+
 
 // =============================================================================
 //   Controllers
@@ -37,8 +41,16 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
     self.currentTab = "Basics";
 
   // User profile data saving
-    self.savingResult = [ '' ];   // 'success' or 'error'
-    self.saveCompanyProfile = function( result ) { DataService.saveCompanyProfileData( result ); };
+    self.savingResult = [ '', '' ];   // 'success' or 'error'
+    self.saveCompanyProfile = function(isValid, result) { 
+        result[0] = ''; result[1] = '';
+        if (isValid === false) {
+            result[0] = 'invalid';
+            return;
+        }
+
+        DataService.saveCompanyProfileData( result ); 
+    };
 
 
   //===============================================
@@ -83,10 +95,12 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 // =============================================================================
 //   Services
 // =============================================================================
-app.factory('DataService', [ '$http', function( $http ) {
+app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, COMPANY_PROFILE_URL ) {
 
-    var AVAILABLE_DB_ID = -1;   // dummy index for new hour spans -- "db_id" value
+    // dummy index for new hour spans -- "db_id" value
+    var AVAILABLE_DB_ID = -1;   
 
+    // Data objects
 	var regData = {};
     var paymentMethods = [ 'Bank transfer', 'PayPal', 'Credit card' ];
     var subscriptionPlans = [ 
@@ -104,8 +118,8 @@ app.factory('DataService', [ '$http', function( $http ) {
             companyName: '',
             foundedAt: '',
             email: '',
-            paymentMethod: '',
-            subscriptionPlan: '',
+            paymentMethod: 'PayPal',
+            subscriptionPlan: 'Business plan',
             logoUrl: '',   // the current logo from DB on the server
             newLogoFile: undefined,
             previewUrl: '/media/da/logo-dummy.png',
@@ -182,7 +196,7 @@ app.factory('DataService', [ '$http', function( $http ) {
             dbData[ dbProps[k] ] = regData[ angProps[k] ];
         }
 
-        return dbData;
+        return angular.toJson(dbData);
     }   // end of "function prepareDataForSaving(data) ..."
 
 
@@ -198,7 +212,7 @@ app.factory('DataService', [ '$http', function( $http ) {
         getSubscriptionPlans: function() { return subscriptionPlans; },
 
         getData: function() { 
-            url = '/company-profile/';
+            url = COMPANY_PROFILE_URL;
             return $http({
                 method: 'GET',
                 url: url,
@@ -208,10 +222,13 @@ app.factory('DataService', [ '$http', function( $http ) {
         },
 
         saveCompanyProfileData: function( result ) { 
-            url = '/company-profile/';
+            url = COMPANY_PROFILE_URL;
             return $http({
                 method: 'POST',
                 url: url,
+                headers: {
+                   'Content-Type': 'application/json',
+                },
                 //responseType: 'json',
                 data: {},   // dummy data -- real data are prepared in "transformRequest"
                 transformRequest: prepareDataForSaving, 
@@ -219,15 +236,27 @@ app.factory('DataService', [ '$http', function( $http ) {
             .then(function(){
                 result[0] = 'success';        
             })
-            .catch(function(){
+            .catch(function( err ){
                 result[0] = 'error';
-            });
-//            $http.post( '/profile', regData )
-//                .success( function() { result[0] = 'success'; } )
-//                .error( function() { result[0] = 'error'; } );
-        },
 
-    };
+                if ( !err )  return;
+                try {
+                    err = angular.fromJson( err );
+                    var keys = Object.keys(err);
+                    var str = '';
+                    for (var k=0, len=keys.length; k < len; k++) {
+                        str += keys[k] + ': ' + err[ keys[k] ].join(', ') + '\n';
+                    }
+                    result[1] = str;
+                }
+                catch(e) {
+                    result[1] = 'Server error';
+                }
+            });
+
+        },   // end of "saveCompanyProfileData: ... "
+
+    };   // end of "return ..."
 
 }]);
 

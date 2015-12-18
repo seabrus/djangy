@@ -17,8 +17,10 @@
                         <table class="table no-bottom">
                           <tbody>
                             <tr ng-repeat="hrs in dayOfWeek.hours as results">
-                              <td class="no-border"><input type="text" placeholder="10:00" ng-model="hrs.from" ng-maxlength="5"></td>
-                              <td class="no-border"><input type="text" placeholder="14:00" ng-model="hrs.until" ng-maxlength="5"></td>
+                              <td class="no-border"><input type="text" placeholder="10:00" ng-model="hrs.from" required=""
+                                        maxlength="5" ng-pattern="/^[\d]{1,2}[\:\-][\d]{1,2}$/" ng-maxlength="5"></td>
+                              <td class="no-border"><input type="text" placeholder="14:00" ng-model="hrs.until" required=""
+                                        maxlength="5" ng-pattern="/^[\d]{1,2}[\:\-][\d]{1,2}$/" ng-maxlength="5"></td>
                               <td class="no-border" ng-click="ctrl.deleteTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img 
                                     src="/static/da/ang/img/delete.png" alt="Delete this time span" 
                                     class="whours" title="Delete this time span"></td>

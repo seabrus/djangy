@@ -5,25 +5,26 @@
       <div>     <!--  NO   ng-controller="ProfileController as ctrl" -->
 
 <!-- Tabs selector -->
-        <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation" class="active font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Basics' ">Basics</a></li>
-          <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Logo' ">Logo</a></li>
-          <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Hours' ">Hours</a></li>
-          <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Plans' ">Plans</a></li>
-          <li role="presentation" class="font22 save-profile-bkground"><a href="" data-toggle="tab" 
-               ng-click="ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile( ctrl.savingResult )" 
-               class="save-profile-color">Save profile</a></li> 
-        </ul>
-
         <form class="form-horizontal" name="regForm"> 
-                 <!-- ng-submit="ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile( ctrl.savingResult )" -->
-         <div ng-switch="ctrl.currentTab">
+                 <!-- ng-submit="ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile( regForm.$invalid, ctrl.savingResult )" -->
 
+            <ul class="nav nav-tabs" role="tablist">
+              <li role="presentation" class="active font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Basics' ">Basics</a></li>
+              <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Logo' ">Logo</a></li>
+              <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Hours' ">Hours</a></li>
+              <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Plans' ">Plans</a></li>
+              <li role="presentation" class="font22 save-profile-bkground"><a href="" data-toggle="tab" 
+                   ng-click="ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile(regForm.$valid, ctrl.savingResult)" 
+                   class="save-profile-color">Save profile</a></li>
+            </ul>
+
+    <!--   ng-SWITCH   -->
+         <div ng-switch="ctrl.currentTab">
 
     <!-- TAB: Basic information -->
           <div class="registration" ng-switch-when="Basics">
             <div class="page-header">
-              <h2>Basic information</h2> <a name="required-fields"></a>
+              <h2>Basic information</h2>
             </div>
 
             <div class="form-group" style="margin-left:0px;"
@@ -36,24 +37,31 @@
                          ng-blur="visited1=true" >
             </div>
 
-            <div class="form-group" ng-class="{'has-error': regForm.foundedAt.$dirty && regForm.foundedAt.$invalid}" 
+            <div class="form-group" style="margin-left:0px;"
+                   ng-init="visited2=false" 
+                   ng-class="{'has-error': regForm.foundedAt.$dirty && regForm.foundedAt.$invalid && visited2}" 
                    style="margin-left:0px;">
               <label for="foundedAt"><i>*</i> Founded at:</label>
               <input type="text" id="foundedAt" name="foundedAt" required=""
-                         placeholder="2000" ng-pattern="/^[\d]{4}$/"
-                        ng-model="ctrl.regData.foundedAt" class="form-control">​
+                         placeholder="2000" ng-pattern="/^1[\d]{3}$|^20[0-1][\d]$/"
+                         ng-model="ctrl.regData.foundedAt" class="form-control" 
+                         ng-blur="visited2=true" >​
             </div>
 
-            <div class="form-group" ng-class="{'has-error': regForm.email.$dirty && regForm.email.$invalid}" style="margin-left:0px;">
+            <div class="form-group" style="margin-left:0px;"
+                   ng-init="visited3=false" 
+                   ng-class="{'has-error': regForm.email.$dirty && regForm.email.$invalid && visited3}">
               <label><i>*</i> Contact email:</label>
-              <input type="email" id="email" name="email" required="" placeholder="your_name@company.com" 
-                         ng-model="ctrl.regData.email" class="form-control"> ​
+              <input type="email" id="email" name="email" required="" 
+                         placeholder="your_name@company.com" 
+                         ng-model="ctrl.regData.email" class="form-control" 
+                         ng-blur="visited3=true" >
             </div>
 
             <div class="form-group" style="margin-left:0px;">
               <label for="">Accept payments:</label>
-              <select ng-model="ctrl.regData.paymentMethod" 
-                          ng-options="method for method in ctrl.paymentMethods" class="form-control">
+              <select ng-model="ctrl.regData.paymentMethod"
+                         ng-options="method for method in ctrl.paymentMethods" class="form-control">
               </select>
             </div>
 
@@ -113,7 +121,8 @@
               <div class="panel" ng-class="plan.style">
                 <div class="panel-heading">
                   <h3 class="panel-title font18">
-                    <label><input type="radio" name="plan" ng-model="ctrl.regData.subscriptionPlan" ng-value="plan.name">
+                    <label><input type="radio" name="plan"
+                                        ng-model="ctrl.regData.subscriptionPlan" ng-value="plan.name">
                     <span ng-bind="plan.name"></span></label>
                   </h3>
                 </div>
@@ -129,6 +138,12 @@
             <div class="blank">&nbsp;</div>
             <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='error' ">
                 <strong class="font22">&#10004; Warning:</strong> &nbsp;Error occurred when saving the profile. Try again a bit later
+                <br><span ng-show="ctrl.savingResult[1]" ng-bind-html="ctrl.savingResult[1]"></span>
+            </div>
+            <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='invalid' ">
+                <strong class="font22">&#10004; Warning:</strong> &nbsp;You didn't fill in required fields or some of them have errors. 
+                      Please try again and correct this.
+                <br><span ng-show="ctrl.savingResult[1]" ng-bind-html="ctrl.savingResult[1]"></span>
             </div>
             <div class="alert alert-success" role="alert" ng-show="ctrl.savingResult[0]==='success' ">
                 <strong class="font22">&#10004; Success:</strong> &nbsp;Your profile was saved successfully
