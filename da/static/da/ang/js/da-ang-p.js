@@ -17,7 +17,7 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 	var self = this;
 
   // Application data initialization
-	// self.regData
+	// self.regData -- the main controller data object
     DataService.getData()
         .then( function(response) {  
             self.regData = response.data;
@@ -38,7 +38,7 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 
   // User profile data saving
     self.savingResult = [ '' ];   // 'success' or 'error'
-    self.saveUserProfile = function( result ) { DataService.saveUserProfileData( result ); };
+    self.saveCompanyProfile = function( result ) { DataService.saveCompanyProfileData( result ); };
 
 
   //===============================================
@@ -56,8 +56,9 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 
         // Add a new time span after the active one  OR  the first one into an empty array of time spans  
 		if ( j < len2  ||  len2 === 0 ) {
-			var buf = {from: '', until: ''};
+			var buf = {from: '', until: '', id: 0, db_id: DataService.AVAILABLE_DB_ID};
 			selectedDay.hours.splice( j+1, 0, buf );
+            DataService.AVAILABLE_DB_ID--;
 		}
 	};
 
@@ -84,6 +85,8 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
 // =============================================================================
 app.factory('DataService', [ '$http', function( $http ) {
 
+    var AVAILABLE_DB_ID = -1;   // dummy index for new hour spans -- "db_id" value
+
 	var regData = {};
     var paymentMethods = [ 'Bank transfer', 'PayPal', 'Credit card' ];
     var subscriptionPlans = [ 
@@ -91,23 +94,10 @@ app.factory('DataService', [ '$http', function( $http ) {
         { name: 'Business plan', style: 'panel-success', description: 'This plan is selected by most companies' }, 
         { name: 'Advanced plan', style: 'panel-info', description: 'A plan for corporate networks' } 
     ];
+	//var dbData = {};
 
-	var dbData = {};
-/* {
-        id: 1,
-        companyName: '',
-        foundedAt: '',
-        email: '',
-        logoUrl:  '/media/da/logo2.jpg',
-        paymentMethod: 'PayPal',
-        subscriptionPlan: 'Business plan',
-        hours: [
-          { dayName: 'Monday', from: '9:00', until: '12:30', db_id: 11 },
-        ],
-	};
-*/
 
-    // Conform DB and client-side data structures and properties names
+// Conform DB and client-side data structures and properties names
     function prepareData(data) {
         regData = {
             id: 0,
@@ -136,60 +126,76 @@ app.factory('DataService', [ '$http', function( $http ) {
         }
 
         // Existing company profile
-        // Initial data (python-style named data) => dbData (javascript-style named data)
         var dbProps  = [ "id", "company_name", "founded_at", "email", "payment_method", "subscription_plan", "logo_url", ];
         var angProps = [ "id", "companyName", "foundedAt", "email", "paymentMethod", "subscriptionPlan", "logoUrl", ];
-        var dbHoursPr  = [ "id", "day_name", "from_time", "until_time", "db_id", ];
-        var angHoursPr = [ "id", 'dayName', 'from', 'until', 'db_id', ];
-
-        dbData = {};
 
         for (var n=0, len1=dbProps.length; n<len1; n++ ) {
-            dbData[ angProps[n] ] = data[ dbProps[n] ]; 
-        }
-
-        dbData['hours'] = [];
-        for (var m=0, len2=data['hours'].length; m<len2; m++ ) {
-            var hourItem = {};
-
-            for (var p=0, len3=dbHoursPr.length; p<len3; p++ ) {
-                hourItem[ angHoursPr[p] ] = data['hours'][ m ][ dbHoursPr[p] ]; 
-            }
-            dbData['hours'].push( hourItem );
-        }
-
-        data = {};
-
-        // dbData (javascript-style named data) => regData (convenient for displaying in the view)
-        var commonParams = [ 'id', 'companyName', 'foundedAt', 'email', 'paymentMethod', 'subscriptionPlan', 'logoUrl' ];
-        for (var k=0, len=commonParams.length; k < len; k++) {
-            regData[ commonParams[k] ] = dbData[ commonParams[k] ];
+            regData[ angProps[n] ] = data[ dbProps[n] ]; 
         }
 
         var days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
-        for (var k=0; k < 7; k++) {
-            regData.openingHours[ k ].hours = []; regData.openingHours
-            for (var j=0, len=dbData.hours.length; j < len; j++) {
-                 if ( dbData.hours[ j ].dayName === days[k] ) {
-                    var times ={};
-                    times.from = dbData.hours[ j ].from;
-                    times.until = dbData.hours[ j ].until;
-                    times.db_id = dbData.hours[ j ].db_id;
+        var dbHoursPr  = [ "id", "from_time", "until_time", "db_id", ];   // "day_name" 
+        var angHoursPr = [ "id", 'from', 'until', 'db_id', ];                      // 'dayName' 
 
+        for (var k=0; k < 7; k++) {
+            regData.openingHours[ k ].hours = [];
+            for (var j=0, len=data['hours'].length; j < len; j++) {
+                 if ( data['hours'][ j ]['day_name'] === days[k] ) {
+                    var times ={};
+                    for ( var i=0, len1=dbHoursPr.length; i < len1; i++ ) {
+                        times[ angHoursPr[i] ] = data['hours'][ j ][ dbHoursPr[i] ];
+                    }
                     regData.openingHours[ k ].hours.push( times );
                 }
             }
         }
 
+        data = {};
         return regData;
     }   // end of "function prepareData(data) ..."
 
 
+// Preparation data for saving in the DB on the server
+    function prepareDataForSaving(data) {
+
+        var dbHoursPr  = [ "id", "from_time", "until_time", "db_id", ];   // "day_name" -- additional property
+        var angHoursPr = [ "id", 'from', 'until', 'db_id', ];                      // 'dayName'
+
+        var dbData = {hours: []};
+
+        var days = [ 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday' ];
+        for (var k=0; k < 7; k++) {
+            for (var j=0, len=regData.openingHours[ k ].hours.length; j < len; j++) {
+                var item = {};
+                for (var m=0, len1=dbHoursPr.length; m < len1; m++) {
+                    item[ dbHoursPr[m] ] = regData.openingHours[ k ].hours[ j ][ angHoursPr[m] ];
+                }
+                item[ 'day_name' ] = days[ k ];
+                dbData.hours.push( item );
+            }
+        }
+
+        var dbProps  = [ "id", "company_name", "founded_at", "email", "payment_method", "subscription_plan", "logo_url", ];
+        var angProps = [ "id", "companyName", "foundedAt", "email", "paymentMethod", "subscriptionPlan", "logoUrl", ];
+
+        for (var k=0, len=dbProps.length; k < len; k++) {
+            dbData[ dbProps[k] ] = regData[ angProps[k] ];
+        }
+
+        return dbData;
+    }   // end of "function prepareDataForSaving(data) ..."
+
+
 
     return  { 
+        AVAILABLE_DB_ID: AVAILABLE_DB_ID,
+
         getData0: function() { 
             return regData;
         },
+
+        getPaymentMethods: function() { return paymentMethods; }, 
+        getSubscriptionPlans: function() { return subscriptionPlans; },
 
         getData: function() { 
             url = '/company-profile/';
@@ -201,13 +207,24 @@ app.factory('DataService', [ '$http', function( $http ) {
             });
         },
 
-        getPaymentMethods: function() { return paymentMethods; }, 
-        getSubscriptionPlans: function() { return subscriptionPlans; },
-
-        saveUserProfileData: function( result ) { 
-            $http.post( '/profile', regData )
-                .success( function() { result[0] = 'success'; } )
-                .error( function() { result[0] = 'error'; } );
+        saveCompanyProfileData: function( result ) { 
+            url = '/company-profile/';
+            return $http({
+                method: 'POST',
+                url: url,
+                //responseType: 'json',
+                data: {},   // dummy data -- real data are prepared in "transformRequest"
+                transformRequest: prepareDataForSaving, 
+            })
+            .then(function(){
+                result[0] = 'success';        
+            })
+            .catch(function(){
+                result[0] = 'error';
+            });
+//            $http.post( '/profile', regData )
+//                .success( function() { result[0] = 'success'; } )
+//                .error( function() { result[0] = 'error'; } );
         },
 
     };

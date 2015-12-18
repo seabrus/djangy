@@ -4,7 +4,7 @@ from . models import Company, OpeningHours
 
 
 class OpeningHoursSerializer(serializers.ModelSerializer):
-    db_id = serializers.IntegerField( source='id', min_value=0 )
+    db_id = serializers.IntegerField( source='id' )
 
     class Meta:
         model = OpeningHours
