@@ -34,15 +34,19 @@ class HoursList(generics.ListAPIView):
 
 
 
+import json
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.parsers import JSONParser, MultiPartParser
 
 NEW_COMPANY = 'NEW COMPANY'
 
 
 class CompanyProfile(APIView):
     permission_classes = (permissions.IsAuthenticated, IsManager, )
+    parser_classes = (JSONParser, MultiPartParser, )
 
     def get_company(self, request):
         try:
@@ -60,6 +64,31 @@ class CompanyProfile(APIView):
 
     def post(self, request, format=None):
         company = self.get_company(request)
+
+        if request.data.get('json_data'):
+            data = request.data.get('json_data')
+            #data = JSONParser().parse(json_data)
+            data = json.loads( data )
+        else:
+            data = request.data
+
+        logo_img_file = request.data.get('logo_img', None)
+        if logo_img_file:
+            data.update( {'logo_img': logo_img_file} )
+            if bool( company.logo_img ):
+                company.logo_img.delete(save=False)
+
+        if company == NEW_COMPANY:
+            serializer = CompanySerializer(data=data)
+        else:
+            serializer = CompanySerializer(company, data=data)
+        if serializer.is_valid():
+            serializer.save(manager=request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    """
+    def post(self, request, format=None):
+        company = self.get_company(request)
         if company == NEW_COMPANY:
             serializer = CompanySerializer(data=request.data)
         else:
@@ -68,7 +97,7 @@ class CompanyProfile(APIView):
             serializer.save(manager=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+    """
 
     def delete(self, request, format=None):
         company = self.get_company(request)

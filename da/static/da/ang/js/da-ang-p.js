@@ -221,56 +221,62 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
             });
         },
 
+
         saveCompanyProfileData: function( result ) { 
             url = COMPANY_PROFILE_URL;
-            return $http({
-                method: 'POST',
-                url: url,
-                headers: {
-                   'Content-Type': 'application/json',
-                },
-                //responseType: 'json',
-                data: {},   // dummy data -- real data are prepared in "transformRequest"
-                transformRequest: prepareDataForSaving, 
-            })
-            .then(function(){
-                result[0] = 'success';        
-            })
-            .catch( function( err ){
-                result[0] = 'error';
+            var postRequest = null;
 
-                if ( !err )  return;
-                try {
-                    var keys = Object.keys(err.data);
-                    var str = '';
-                    for (var k=0, len=keys.length; k < len; k++) {
-                        str += keys[k] + ': ' + err[ keys[k] ].join(', ') + '\n';
+            if ( regData.newLogoFile === undefined ) {
+                postRequest = $http({
+                    method: 'POST',
+                    url: url,
+                    headers: { 'Content-Type': 'application/json', },
+                    data: {},   // dummy data -- real data are prepared in "transformRequest"
+                    transformRequest: prepareDataForSaving, 
+                });
+            }   // end of "if ( newLogoFile === undefined ) ..."
+
+
+            if ( regData.newLogoFile !== undefined ) {
+                var fd = new FormData();
+                var jsonData = prepareDataForSaving();
+                fd.append('json_data', jsonData);
+                fd.append('logo_img', regData.newLogoFile);
+
+                postRequest = $http({
+                    method: 'POST',
+                    url: url,
+                    headers: { 'Content-Type': undefined, },
+                    data: fd,
+                });
+            }   // end of "if ( newLogoFile !== undefined ) ..."
+
+
+            return postRequest.then( function( response ) {     // No need to JSON.parse
+                    result[0] = 'success';
+                    regData.logoUrl = response.data.logo_url;
+                    regData.newLogoFile = undefined;
+                    regData.previewUrl = '/media/da/logo-dummy.png';
+                })
+                .catch( function( err ) {
+                    if ( !err )  return;
+                    result[0] = 'error';
+                    try {
+                        var keys = Object.keys(err.data);
+                        var str = '';
+                        for (var k=0, len=keys.length; k < len; k++) {
+                            str += keys[k] + ': ' + err[ keys[k] ].join(', ') + '\n';
+                        }
+                        result[1] = str;
                     }
-                    result[1] = str;
-                }
-                catch(e) {
-                    result[1] = 'Server error: status = ' + err.status + ', ' + err.statusText;
-                }
-/*
-                try {
-                    err = angular.fromJson( err );
-                    var keys = Object.keys(err);
-                    var str = '';
-                    for (var k=0, len=keys.length; k < len; k++) {
-                        str += keys[k] + ': ' + err[ keys[k] ].join(', ') + '\n';
+                    catch(e) {
+                        result[1] = 'Error: status = ' + err.status + ', ' + err.statusText;
                     }
-                    result[1] = str;
-                }
-                catch(e) {
-                    result[1] = 'Server error';
-                }
-*/
-            });   // end of ".catch( function( err ){ ..."
+                });   // end of ".catch( function( err ){ ..."
 
         },   // end of "saveCompanyProfileData: ... "
 
     };   // end of "return ..."
-
 }]);
 
 
