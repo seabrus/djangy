@@ -236,10 +236,22 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
             .then(function(){
                 result[0] = 'success';        
             })
-            .catch(function( err ){
+            .catch( function( err ){
                 result[0] = 'error';
 
                 if ( !err )  return;
+                try {
+                    var keys = Object.keys(err.data);
+                    var str = '';
+                    for (var k=0, len=keys.length; k < len; k++) {
+                        str += keys[k] + ': ' + err[ keys[k] ].join(', ') + '\n';
+                    }
+                    result[1] = str;
+                }
+                catch(e) {
+                    result[1] = 'Server error: status = ' + err.status + ', ' + err.statusText;
+                }
+/*
                 try {
                     err = angular.fromJson( err );
                     var keys = Object.keys(err);
@@ -252,7 +264,8 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
                 catch(e) {
                     result[1] = 'Server error';
                 }
-            });
+*/
+            });   // end of ".catch( function( err ){ ..."
 
         },   // end of "saveCompanyProfileData: ... "
 

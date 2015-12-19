@@ -141,8 +141,9 @@
                 <br><span ng-show="ctrl.savingResult[1]" ng-bind-html="ctrl.savingResult[1]"></span>
             </div>
             <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='invalid' ">
-                <strong class="font22">&#10004; Warning:</strong> &nbsp;You didn't fill in required fields or some of them have errors. 
-                      Please try again and correct this.
+                <strong class="font22">&#10004; Warning:</strong> &nbsp;You didn't fill in required fields or some of them have errors.<br> 
+                      For example, you might forget to type 'Business name' or created an opening hours span but didn't fill it in. 
+                      <br>Please try again and correct this.
                 <br><span ng-show="ctrl.savingResult[1]" ng-bind-html="ctrl.savingResult[1]"></span>
             </div>
             <div class="alert alert-success" role="alert" ng-show="ctrl.savingResult[0]==='success' ">
