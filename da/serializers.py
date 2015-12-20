@@ -11,15 +11,15 @@ class OpeningHoursSerializer(serializers.ModelSerializer):
         fields = ('id', 'day_name', 'from_time', 'until_time', 'db_id', ) 
 
 
-#   ---   It looks like ListSerializer is for bulk operations but not directly for nested objects
+#   ---   It looks like ListSerializer is only for bulk operations but not for the nested objects
 #class HoursListSerializer(serializers.ListSerializer):   
     #pass
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    hours = OpeningHoursSerializer( many=True )     # similar to: openinghours_set = OpeningHoursSerializer( many=True ), see models.py
-    logo_url = serializers.SerializerMethodField(read_only=True)
-    #logo_url = serializers.ReadOnlyField( source='logo_img.url' )   # -- Raises error when a file is empty       # CharField(read_only=True)
+    hours = OpeningHoursSerializer( many=True )     # similar to: openinghours_set = OpeningHoursSerializer(many=True), see models.py
+    logo_url = serializers.SerializerMethodField(read_only=True)    # --- see  "get_logo_url(self, obj)"  function below
+    #logo_url = serializers.ReadOnlyField( source='logo_img.url' )   # -- Causes an error if the file is empty       # CharField(read_only=True)
 
     class Meta:
         model = Company
@@ -34,6 +34,7 @@ class CompanySerializer(serializers.ModelSerializer):
             return obj.logo_img.url
         return ''
 
+    # This is used for creating a new model instance in the  serializer.save(...)  call
     def create(self, validated_data):
         hours_data = validated_data.pop('hours')
         hours_len = len(hours_data)
@@ -41,13 +42,13 @@ class CompanySerializer(serializers.ModelSerializer):
         if hours_len != 0:
             for i in range( hours_len ):
                 hours_data[i].pop('id')
-                #hours_data[i].pop('db_id')   # this be present as part of OpeningHoursSerializer fields
+                #hours_data[i].pop('db_id')   # this should be present as part of OpeningHoursSerializer's NON read-only fields
                 OpeningHours.objects.create(company=company, **hours_data[i])
         return company
 
-
+    # This is used for updating an existing model instance in the  serializer.save(...)  call
     def update(self, instance, validated_data):
-        hours = instance.hours.all()   # Could be empty []
+        hours = instance.hours.all()   # Can be empty []
         if hours.count() > 0:
             hours.delete()
 
@@ -71,9 +72,10 @@ class CompanySerializer(serializers.ModelSerializer):
 
 
 
-
-
-"""     INFO:
+# =========================================================================================
+#   INFO and SNIPPETS for nested objects processing
+# =========================================================================================
+""" 
  http://www.django-rest-framework.org/api-guide/serializers/#dealing-with-nested-objects
 
 class UserSerializer(serializers.ModelSerializer):

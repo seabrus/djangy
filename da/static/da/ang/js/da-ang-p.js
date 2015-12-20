@@ -204,7 +204,7 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
     return  { 
         AVAILABLE_DB_ID: AVAILABLE_DB_ID,
 
-        getData0: function() { 
+        getData0: function() {     // it is used for testing
             return regData;
         },
 
@@ -212,10 +212,9 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
         getSubscriptionPlans: function() { return subscriptionPlans; },
 
         getData: function() { 
-            url = COMPANY_PROFILE_URL;
             return $http({
                 method: 'GET',
-                url: url,
+                url: COMPANY_PROFILE_URL,
                 responseType: 'json',
                 transformResponse: prepareData, 
             });
@@ -223,18 +222,17 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
 
 
         saveCompanyProfileData: function( result ) { 
-            url = COMPANY_PROFILE_URL;
             var postRequest = null;
 
             if ( regData.newLogoFile === undefined ) {
                 postRequest = $http({
                     method: 'POST',
-                    url: url,
+                    url: COMPANY_PROFILE_URL,
                     headers: { 'Content-Type': 'application/json', },
                     data: {},   // dummy data -- real data are prepared in "transformRequest"
                     transformRequest: prepareDataForSaving, 
                 });
-            }   // end of "if ( newLogoFile === undefined ) ..."
+            }
 
 
             if ( regData.newLogoFile !== undefined ) {
@@ -245,16 +243,16 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
 
                 postRequest = $http({
                     method: 'POST',
-                    url: url,
+                    url: COMPANY_PROFILE_URL,
                     headers: { 'Content-Type': undefined, },
                     data: fd,
                 });
-            }   // end of "if ( newLogoFile !== undefined ) ..."
+            }
 
 
-            return postRequest.then( function( response ) {     // No need to JSON.parse
+            return postRequest.then( function( response ) {     // No need to JSON.parse here - the response is already parsed
                     result[0] = 'success';
-                    regData.logoUrl = response.data.logo_url;
+                    regData.logoUrl = response.data.logo_url  ||  '';
                     regData.newLogoFile = undefined;
                     regData.previewUrl = '/media/da/logo-dummy.png';
                 })
@@ -272,15 +270,16 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
                     catch(e) {
                         result[1] = 'Error: status = ' + err.status + ', ' + err.statusText;
                     }
-                });   // end of ".catch( function( err ){ ..."
+                });
 
-        },   // end of "saveCompanyProfileData: ... "
+        },   // end of "saveCompanyProfileData: ... " method
 
-    };   // end of "return ..."
+    };   // end of "return ..." of the service
 }]);
 
 
 
+// =============================================================================
 // =============================================================================
 //   Directives
 // =============================================================================
@@ -376,31 +375,4 @@ app.directive('checkImage', [ function() {
    };
 }]);
 
-
-/*
-	        $.ajax({
-	            url: '/upload-records-archive',
-	            type: 'POST',
-	            processData: false,
-	            data: file,
-	            contentType: 'application/octet-stream',
-	            //contentType: 'application/x-gzip',     // this works too
-	            //contentType: 'multipart/form-data',   // this works too
-	            headers: {
-	                'X-File-Size': file.size,
-	                'X-File-Name': Meteor.userId(),
-	                'X-File-Checksum': result,
-	                'Cache-Control': 'no-cache',
-	            },
-	            dataType: 'text',
-	            success: Meteor.bindEnvironment( function() {   // data, textStatus, xhr
-	                                alert( 'Records archive is uploaded successfully!' );
-	                            }),
-	            error:       Meteor.bindEnvironment( function( xhr, textStatus, errorThrown ) {
-	                                alert( xhr.responseText );   // xhr.status
-	                            }),
-	        });
-        });
-    },
-*/
 

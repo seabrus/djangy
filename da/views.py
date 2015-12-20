@@ -54,6 +54,8 @@ class CompanyProfile(APIView):
         except Company.DoesNotExist:
             return NEW_COMPANY
 
+
+    # GET request
     def get(self, request, format=None):
         company = self.get_company(request)
         if company == NEW_COMPANY:
@@ -62,20 +64,20 @@ class CompanyProfile(APIView):
         return Response(serializer.data)
 
 
+    # POST request
     def post(self, request, format=None):
         company = self.get_company(request)
 
-        if request.data.get('json_data'):
+        if request.data.get('json_data'):     # request with FormData = 'json_data' + file 'logo_img'   -- MultiPartParser is used
             data = request.data.get('json_data')
-            #data = JSONParser().parse(json_data)
             data = json.loads( data )
-        else:
+        else:                                           # request with json data only, no file added -- JSONParser is used
             data = request.data
 
         logo_img_file = request.data.get('logo_img', None)
         if logo_img_file:
             data.update( {'logo_img': logo_img_file} )
-            if bool( company.logo_img ):
+            if bool( company.logo_img ):     # Delete the previous version of logo, if exists
                 company.logo_img.delete(save=False)
 
         if company == NEW_COMPANY:
@@ -86,19 +88,9 @@ class CompanyProfile(APIView):
             serializer.save(manager=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    """
-    def post(self, request, format=None):
-        company = self.get_company(request)
-        if company == NEW_COMPANY:
-            serializer = CompanySerializer(data=request.data)
-        else:
-            serializer = CompanySerializer(company, data=request.data)
-        if serializer.is_valid():
-            serializer.save(manager=request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    """
 
+
+    # DELETE request
     def delete(self, request, format=None):
         company = self.get_company(request)
         if company != NEW_COMPANY:
