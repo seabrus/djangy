@@ -77,8 +77,8 @@ class CompanyProfile(APIView):
         logo_img_file = request.data.get('logo_img', None)
         if logo_img_file:
             data.update( {'logo_img': logo_img_file} )
-            if bool( company.logo_img ):     # Delete the previous version of logo, if exists
-                company.logo_img.delete(save=False)
+            #if bool( company.logo_img ):     # Delete the previous version of logo, if exists
+            #    company.logo_img.delete(save=False)
 
         if company == NEW_COMPANY:
             serializer = CompanySerializer(data=data)

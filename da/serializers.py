@@ -64,10 +64,13 @@ class CompanySerializer(serializers.ModelSerializer):
         instance.email = validated_data.get('email', instance.email)
         instance.payment_method = validated_data.get('payment_method', instance.payment_method)
         instance.subscription_plan = validated_data.get('subscription_plan', instance.subscription_plan)
+
+        if bool(instance.logo_img):     # Delete the previous version of logo, if exists
+            instance.logo_img.delete(save=False)
         if validated_data.has_key('logo_img'):
             instance.logo_img = validated_data.get('logo_img')
-        instance.save()
 
+        instance.save()
         return instance
 
 
