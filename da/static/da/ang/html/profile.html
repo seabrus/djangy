@@ -8,12 +8,16 @@
         <form name="regForm" novalidate>
 
             <ul class="nav nav-tabs" role="tablist">
-              <li role="presentation" class="active font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Basics' ">Basics</a></li>
-              <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Logo' ">Logo</a></li>
-              <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Hours' ">Hours</a></li>
-              <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Plans' ">Plans</a></li>
+              <li role="presentation" class="active font22"><a href="" data-toggle="tab" 
+                   ng-click="ctrl.setValidity(ctrl.currentTab, regForm.$valid); ctrl.currentTab='Basics' ">Basics</a></li>
+              <li role="presentation" class="font22"><a href="" data-toggle="tab" 
+                   ng-click="ctrl.setValidity(ctrl.currentTab, regForm.$valid); ctrl.currentTab='Logo' ">Logo</a></li>
+              <li role="presentation" class="font22"><a href="" data-toggle="tab" 
+                   ng-click="ctrl.setValidity(ctrl.currentTab, regForm.$valid); ctrl.currentTab='Hours' ">Hours</a></li>
+              <li role="presentation" class="font22"><a href="" data-toggle="tab" 
+                   ng-click="ctrl.setValidity(ctrl.currentTab, regForm.$valid); ctrl.currentTab='Plans' ">Plans</a></li>
               <li role="presentation" class="font22 save-profile-bkground"><a href="" data-toggle="tab"
-                   ng-click="ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile(regForm.$valid, ctrl.savingResult)"
+                   ng-click="ctrl.setValidity(ctrl.currentTab, regForm.$valid); ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile()"
                    class="save-profile-color">Save profile</a></li>
             </ul>
 
@@ -145,18 +149,22 @@
         <div ng-switch-when="SaveProfile">
             <div class="blank">&nbsp;</div>
             <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='error' ">
-                <strong class="font22">&#10004; Warning:</strong> &nbsp;Error occurred when saving the profile. Try again a bit later
+                <strong class="font22">&#10004; Warning</strong> <br><br>Error occurred when saving the profile. Try again a bit later
                 <br><span ng-show="ctrl.savingResult[1]" ng-bind-html="ctrl.savingResult[1]"></span>
             </div>
-            <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='invalid' ">
-                <strong class="font22">&#10004; Warning:</strong> &nbsp;You didn't fill in required fields or some of them have errors.
-                      <br><br>For example, you might forget to type 'Business name' in the tab 'Basics'.<br>Or you created 
-                        an opening hours span in the tab 'Hours' but didn't fill it in -- you should either type time or delete the span.
-                      <br><br>Please try again and correct this.
-                <br><span ng-show="ctrl.savingResult[1]" ng-bind-html="ctrl.savingResult[1]"></span>
+            <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='invalidBasics' ">
+                <strong class="font22">&#10004; Warning</strong> <br><br>It looks like you haven't filled in required fields 
+                       or some of them have errors in the <b>'Basics'</b> tab.
+                      <br><br>Please visit the <b>'Basics'</b> tab again and correct this.
+            </div>
+            <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='invalidHours' ">
+                <strong class="font22">&#10004; Warning</strong> <br><br>It looks like you haven't fill in required fields
+                       or some of them have errors in the <b>'Hours'</b> tab.
+                      <br>Note that if you create an opening hours span, you should either type time or delete the span.
+                      <br><br>Please visit the <b>'Hours'</b> tab again and correct this.
             </div>
             <div class="alert alert-success" role="alert" ng-show="ctrl.savingResult[0]==='success' ">
-                <strong class="font22">&#10004; Success:</strong> &nbsp;Your profile was saved successfully
+                <strong class="font22">&#10004; Success</strong> <br><br>Your profile was saved successfully
             </div>
         </div>
 

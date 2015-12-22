@@ -37,24 +37,37 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
     self.subscriptionPlans = DataService.getSubscriptionPlans();
 
   // Tab selection initialization
-    self.currentTab = "Basics";
+    self.currentTab = 'Basics';
 
   // Variables to remember validation status for the closed ngSwitch tabs
-    self.fullyValid = true;
     self.visited1 = false;
     self.visited2 = false;
     self.visited3 = false;
+    self.validity = { 'Basics': true, 'Hours': true};
+    self.setValidity = function( tab, isValid ){
+        if (tab === 'Basics')
+            self.validity[ 'Basics' ] = isValid;
+        if (tab === 'Hours')
+            self.validity[ 'Hours' ] = isValid;
+    };
+
 
   // User profile data saving
     self.savingResult = [ '', '' ];   // 'success' or 'error'
-    self.saveCompanyProfile = function(isValid, result) { 
-        result[0] = ''; result[1] = '';
-        if (isValid === false) {
-            result[0] = 'invalid';
+    self.saveCompanyProfile = function() { 
+        self.savingResult[0] = ''; 
+        self.savingResult[1] = '';
+
+        if (self.validity[ 'Basics' ] === false) {
+            self.savingResult[0] = 'invalidBasics';
+            return;
+        }
+        if (self.validity[ 'Hours' ] === false) {
+            self.savingResult[0] = 'invalidHours';
             return;
         }
 
-        //DataService.saveCompanyProfileData( result ); 
+        DataService.saveCompanyProfileData( self.savingResult ); 
     };
 
 
