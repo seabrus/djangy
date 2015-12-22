@@ -2,19 +2,18 @@
   <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-0 col-md-8 col-md-offset-0 col-lg-6 col-lg-offset-0">
     <h2>Your Company Profile</h2>
 
-      <div>     <!--  NO   ng-controller="ProfileController as ctrl" -->
+      <div>     <!--  NO need in  ng-controller="ProfileController as ctrl" here -- this is already stated in the ngRoute -->
 
 <!-- Tabs selector -->
-        <form class="form-horizontal" name="regForm"> 
-                 <!-- ng-submit="ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile( regForm.$invalid, ctrl.savingResult )" -->
+        <form name="regForm" novalidate>
 
             <ul class="nav nav-tabs" role="tablist">
               <li role="presentation" class="active font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Basics' ">Basics</a></li>
               <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Logo' ">Logo</a></li>
               <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Hours' ">Hours</a></li>
               <li role="presentation" class="font22"><a href="" data-toggle="tab" ng-click="ctrl.currentTab='Plans' ">Plans</a></li>
-              <li role="presentation" class="font22 save-profile-bkground"><a href="" data-toggle="tab" 
-                   ng-click="ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile(regForm.$valid, ctrl.savingResult)" 
+              <li role="presentation" class="font22 save-profile-bkground"><a href="" data-toggle="tab"
+                   ng-click="ctrl.currentTab='SaveProfile'; ctrl.saveCompanyProfile(regForm.$valid, ctrl.savingResult)"
                    class="save-profile-color">Save profile</a></li>
             </ul>
 
@@ -27,42 +26,51 @@
               <h2>Basic information</h2>
             </div>
 
-            <div class="form-group" style="margin-left:0px;"
-                   ng-init="visited1=false" 
-                   ng-class="{'has-error': regForm.companyName.$dirty && regForm.companyName.$invalid && visited1}" >
-              <label for="companyName"><i>*</i> Business name:</label>
-              <input type="text" id="companyName" name="companyName" required=""
-                         ng-maxlength="50" ng-pattern="/^[\w\s\-\.\,\.\/]{1,50}$/"
-                         ng-model="ctrl.regData.companyName" class="form-control" 
-                         ng-blur="visited1=true" >
+            <div class="form-group rel-pos-m20"
+                   ng-class="{'has-error': f1.$invalid && ctrl.visited1 || f1.$error.pattern}">
+                <label for="companyName"><i>*</i> Business name:</label>
+                <input type="text" id="companyName" name="companyName" class="form-control y-style"
+                         ng-model="ctrl.regData.companyName"
+                         required=""
+                         ng-pattern="/^[^<>]{1,50}$/"
+                         ng-blur="ctrl.visited1=true" >
+                <span ng-init="f1=regForm.companyName" ></span>
+                <div ng-show="f1.$error.required && ctrl.visited1" class="error-text">This field is required</div>
+                <div ng-show="f1.$error.pattern" class="error-text">Inadmissible or over limit character(s)</div>
             </div>
 
-            <div class="form-group" style="margin-left:0px;"
-                   ng-init="visited2=false" 
-                   ng-class="{'has-error': regForm.foundedAt.$dirty && regForm.foundedAt.$invalid && visited2}" 
-                   style="margin-left:0px;">
-              <label for="foundedAt"><i>*</i> Founded at:</label>
-              <input type="text" id="foundedAt" name="foundedAt" required=""
-                         placeholder="2000" ng-pattern="/^1[\d]{3}$|^20[0-1][\d]$/"
-                         ng-model="ctrl.regData.foundedAt" class="form-control" 
-                         ng-blur="visited2=true" >​
+            <div class="form-group rel-pos-m20"
+                   ng-class="{'has-error': f2.$invalid && ctrl.visited2 || f2.$error.pattern}">
+                <label for="foundedAt"><i>*</i> Founded at:</label>
+                <input type="text" id="foundedAt" name="foundedAt" class="form-control y-style"
+                         placeholder="2000"
+                         ng-model="ctrl.regData.foundedAt"
+                         required=""
+                         ng-pattern="/^1[\d]{3}$|^20[0-1][\d]$/"
+                         ng-blur="ctrl.visited2=true">
+                <span ng-init="f2=regForm.foundedAt" ></span>
+                <div ng-show="f2.$error.required && ctrl.visited2" class="error-text">This field is required</div>
+                <div ng-show="f2.$error.pattern" class="error-text">Please type a number from 1000 to 2019</div>
             </div>
 
-            <div class="form-group" style="margin-left:0px;"
-                   ng-init="visited3=false" 
-                   ng-class="{'has-error': regForm.email.$dirty && regForm.email.$invalid && visited3}">
-              <label><i>*</i> Contact email:</label>
-              <input type="email" id="email" name="email" required="" 
-                         placeholder="your_name@company.com" 
-                         ng-model="ctrl.regData.email" class="form-control" 
-                         ng-blur="visited3=true" >
+            <div class="form-group rel-pos-m20"
+                   ng-class="{'has-error': f3.$invalid && ctrl.visited3 || f3.$error.email}">
+                <label for="email"><i>*</i> Contact email:</label>
+                <input type="email" id="email" name="email" class="form-control y-style"
+                         placeholder="your_name@company.com"
+                         ng-model="ctrl.regData.email"
+                         required=""
+                         ng-blur="ctrl.visited3=true" >
+                <span ng-init="f3=regForm.email" ></span>
+                <div ng-show="f3.$error.required && ctrl.visited3" class="error-text">This field is required</div>
+                <div ng-show="f3.$error.email" class="error-text">Please type correct email</div>
             </div>
 
-            <div class="form-group" style="margin-left:0px;">
-              <label for="">Accept payments:</label>
-              <select ng-model="ctrl.regData.paymentMethod"
-                         ng-options="method for method in ctrl.paymentMethods" class="form-control">
-              </select>
+            <div class="form-group">
+                <label for=""><i>*</i> Accept payments:</label>
+                <select ng-model="ctrl.regData.paymentMethod"
+                           ng-options="method for method in ctrl.paymentMethods" class="form-control y-style">
+                </select>
             </div>
 
           </div>   <!-- <div class="registration"> -->
@@ -83,7 +91,7 @@
             </div>
 
             <hr ng-show="ctrl.regData.logoUrl != '' ">
-            <h3><span ng-hide="ctrl.regData.logoUrl != '' ">Add</span><span ng-show="ctrl.regData.logoUrl != '' ">Change</span> 
+            <h3><span ng-hide="ctrl.regData.logoUrl != '' ">Add</span><span ng-show="ctrl.regData.logoUrl != '' ">Change</span>
                   the logo<span ng-show="ctrl.regData.logoUrl != '' ">, if necessary</span>:</h3>
 
             <!-- Component to select and preview a new logo -->
@@ -94,10 +102,10 @@
             </div>
             <div class="text-center"><br>
                   <button type="button" class="btn btn-default"
-                    ng-click="$broadcast('CANCEL_IMAGE_SELECTION')">Cancel</button> 
+                    ng-click="$broadcast('CANCEL_IMAGE_SELECTION')">Cancel</button>
             </div>
 
-          </div>
+          </div>   <!-- end of TAB: Logo -->
 
 
      <!-- TAB: Hours -->
@@ -106,12 +114,12 @@
               <h2>Opening hours</h2>
             </div>
 
-            <div opening-hours-directive=""></div> 
+            <div opening-hours-directive=""></div>
 
           </div>
 
 
-    <!-- TAB: subscribtion plans -->
+    <!-- TAB: Subscribtion Plans -->
         <div ng-switch-when="Plans">
           <div class="page-header">
             <h2>Subscribtion plans</h2>
@@ -141,9 +149,10 @@
                 <br><span ng-show="ctrl.savingResult[1]" ng-bind-html="ctrl.savingResult[1]"></span>
             </div>
             <div class="alert alert-warning" role="alert" ng-show="ctrl.savingResult[0]==='invalid' ">
-                <strong class="font22">&#10004; Warning:</strong> &nbsp;You didn't fill in required fields or some of them have errors.<br> 
-                      For example, you might forget to type 'Business name' or created an opening hours span but didn't fill it in. 
-                      <br>Please try again and correct this.
+                <strong class="font22">&#10004; Warning:</strong> &nbsp;You didn't fill in required fields or some of them have errors.
+                      <br><br>For example, you might forget to type 'Business name' in the tab 'Basics'.<br>Or you created 
+                        an opening hours span in the tab 'Hours' but didn't fill it in -- you should either type time or delete the span.
+                      <br><br>Please try again and correct this.
                 <br><span ng-show="ctrl.savingResult[1]" ng-bind-html="ctrl.savingResult[1]"></span>
             </div>
             <div class="alert alert-success" role="alert" ng-show="ctrl.savingResult[0]==='success' ">

@@ -20,8 +20,7 @@ app.value( 'COMPANY_PROFILE_URL', '/company-profile/' );
 app.controller('ProfileController', [ 'DataService', function( DataService ) {
 	var self = this;
 
-  // Application data initialization
-	// self.regData -- the main controller data object
+  // self.regData -- the main controller data object
     DataService.getData()
         .then( function(response) {  
             self.regData = response.data;
@@ -40,6 +39,12 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
   // Tab selection initialization
     self.currentTab = "Basics";
 
+  // Variables to remember validation status for the closed ngSwitch tabs
+    self.fullyValid = true;
+    self.visited1 = false;
+    self.visited2 = false;
+    self.visited3 = false;
+
   // User profile data saving
     self.savingResult = [ '', '' ];   // 'success' or 'error'
     self.saveCompanyProfile = function(isValid, result) { 
@@ -49,7 +54,7 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
             return;
         }
 
-        DataService.saveCompanyProfileData( result ); 
+        //DataService.saveCompanyProfileData( result ); 
     };
 
 

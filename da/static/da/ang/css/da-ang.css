@@ -1,3 +1,112 @@
+.registration {
+    width:350px;
+}
+.registration i {
+    color:red;
+    font-weight:bold;
+}
+.registration label {
+    font-size: 18px;
+    font-weight:normal;
+}
+.registration .y-style {
+    background-color: #fefdeb;
+    font-size: 18px;
+}
+.registration .file-input {
+    width: 350px;
+    padding: 0 0;
+    text-align: left;
+    font-size: 16px;
+    background-color: #fefdeb;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.rel-pos-m20 {
+    position: relative;
+    margin-bottom: 20px;
+}
+.error-text {
+    color: red;
+    position: absolute;
+    bottom: -19px;
+    padding: 0 3px;
+}
+
+.registration img.whours {
+    width:14px;
+    margin: 0 0 0 10px;
+    cursor:pointer;
+}
+
+
+.table .no-bottom {
+    margin-bottom: 0px;
+}
+.registration td.no-border  {
+    margin: 0px;
+    border: 0px none #ffffff;
+    padding: 0 0 1px 0;
+    vertical-align: middle;
+}
+.registration th.day {
+    width:28%;
+}
+.registration th.from-until {
+    width:33%;
+}
+
+.registration .yh-style {
+    width: 70px;
+    padding: 2px 7px;
+    font-size: 15px;
+    text-align:center;
+    background-color: #fefdeb;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.registration td.td-center  {
+    text-align:center;
+    cursor:pointer;
+}
+
+.registration .pointer {
+    cursor:pointer;
+}
+
+.hours-margin {
+    margin:0 0 -48px 0;
+}
+
+.save-button {
+    margin: 40px 0 0px;
+    border-top: 1px solid #eee;
+    padding-top: 9px;
+}
+.save-profile-bkground {
+    background-color:#ffb853;   /* #f0ad4e   #ffb853   #5bc0de   #f0c282 */
+}
+.save-profile-color {
+    color:#333;
+}
+
+/* ===   Home page   === */
+.companies .td1 {
+    width: 20%;
+}
+.companies .td2 {
+    width: 60%;
+    padding: 20px 0 20px 20px;
+    text-align: left;
+    font-size: 14pt;
+}
+.pointer {
+    cursor:pointer;
+}
+
+/* ===   other styles   === */
 .blank {
     margin: 20px 0 0 0;
 }
@@ -16,194 +125,6 @@
 .font22 {
     font-size:22px;
 }
-
-.registration {
-    width:350px;
-}
-
-.registration label {
-    display:block;
-    font-size: 18px;
-    font-weight: 200;
-    margin:-10px 0 0 0;
-}
-
-.registration i {
-    color:red;
-    font-weight:bold;
-}
-
-.registration input {       /* class="form-control" */
-  display: block;
-/*
-  font-size: 14px;
-  line-height: 1.42857143;   */
-  padding: 6px 12px;
-  color: #333;
-  background-color: #fefdeb;
-  background-image: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-
-    width: 100%;
-    height: 34px;
-    font-size: 18px;
-}
-.registration input:focus {
-  border-color: #66afe9;
-  outline: 0;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
-}
-
-.registration select {
-  display: block;
-  color: #333;
-  background-color: #fefdeb;
-  background-image: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-  -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-          transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
-
-    width: 60%;
-    height: 34px;
-    font-size: 18px;
-    margin:0 0 57px 0;
-}
-.registration select:focus {
-  border-color: #66afe9;
-  outline: 0;
-  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
-          box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
-}
-
-
-.registration img.whours {
-    width:14px;
-    margin: 0 0 0 10px;
-    cursor:pointer;
-}
-
-.registration .file-input {
-    width: 350px;
-    padding: 0 0;
-    text-align: left;
-    font-size: 16px;
-}
-
-
-.table .no-bottom {
-    margin-bottom:0px;
-}
-
-.registration td.no-border  {
-    margin:0px;
-    border:0px none #ffffff;
-    padding:0 0 1px 0;
-    vertical-align:middle;
-}
-
-.registration th.day {
-    width:28%;
-}
-.registration th.from-until {
-    width:33%;
-}
-
-.registration td input {
-    width:70px;
-    padding:2px 7px;
-    font-size: 15px;
-    text-align:center;
-}
-
-.registration td.td-center  {
-    text-align:center;
-    cursor:pointer;
-}
-
-.registration .pointer {
-    cursor:pointer;
-}
-.registration .show-hours::after {
-	content: "click to edit the timetable";   /* url("../img/down.png");  */
-    cursor:pointer;
-    margin:0 0 0 10px;
-    padding: 2px 7px;
-    border:1px solid #ccc;
-    border-radius:5px;
-    font-size:16px;
-    font-weight:normal;
-    color:#333;
-    background:#fefdeb;   /* #337ab7; */
-}
-.registration .hide-hours::after {
-	content: url("../img/up.png");
-    cursor:pointer;
-}
-
-.hours-margin {
-    margin:0 0 -48px 0;
-}
-
-.registration .contact-manager {
-    margin:0 0 0 30px;
-}
-
-.save-button {
-    margin: 40px 0 0px;
-    border-top: 1px solid #eee;
-    padding-top: 9px;
-}
-
-.save-profile-bkground {
-    background-color:#ffb853;   /* #f0ad4e   #ffb853   #5bc0de   #f0c282 */
-}
-.save-profile-color {
-    color:#333;
-}
-
-/* ======================================== */
-.companies .td1 {
-    width: 20%;
-}
-.companies .td1 img {
-/*  width: 100%; */
-}
-.companies .td2 {
-    width: 60%;
-    padding: 10px 0 0 20px;
-    text-align: left;
-    font-size: 15pt;
-}
-/*
-.companies .td3 {
-    width: 20%;
-    padding: 10px 0 0 20px;
-    text-align: center;
-    font-size: 16pt;
-}
-*/
-.companies .td3 input { /*
-    -ms-transform: scale(1.5);
-    -moz-transform: scale(1.5);
-    -webkit-transform: scale(1.5);
-    -o-transform: scale(1.5);
-    transform: scale(1.5); */
-}
-.pointer {
-    cursor:pointer;
-}
-
-
-
 
 
 

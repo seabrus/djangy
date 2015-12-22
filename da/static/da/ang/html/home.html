@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-xs-12 col-xs-offset-0 col-sm-10 col-sm-offset-0 col-md-8 col-md-offset-0 col-lg-6 col-lg-offset-0">
-      <h1>Companies List</h1>
-      <!-- NO <div ng-controller="HomeController as ctrl">   --  DON'T repeat call of the controller in ngRouteProvider and here!  -->
+      <h1>Best Companies</h1>
+      <!-- NO need in <div ng-controller="HomeController as ctrl">   --  DON'T repeat call of the controller in ngRouteProvider and here  -->
 
         <div class="table-responsive">
             <table class="table table-striped companies">
@@ -13,7 +13,7 @@
                             <b>Founded</b>: <span ng-bind-html="::company.foundedAt"></span><br>
                             <b>Email</b>: <span ng-bind-html="::company.email"></span><br>
                             <b>Payment method</b>: <span ng-bind-html="::company.paymentMethod"></span><br>
-                            See <a ng-href="#/details/{{::company.id}}" title="Company details">details</a><br>
+                            See <a ng-href="#/details/{{::company.id}}" title="Company details">details</a>
                         </td>
                     </tr>
                 </tbody>
