@@ -20,12 +20,12 @@
                               <td class="no-border"><input type="text" placeholder="10-00" class="form-control yh-style"
                                         ng-model="hrs.from" 
                                         required="" 
-                                        ng-maxlength="5"
+                                        maxlength="5"
                                         ng-pattern="/^[0-2]{0,1}[0-9]{1}[\:\-][0-5][0-9]$/"></td>
                               <td class="no-border"><input type="text" placeholder="14-00" class="form-control yh-style"
                                         ng-model="hrs.until"
                                         required="" 
-                                        ng-maxlength="5"
+                                        maxlength="5"
                                         ng-pattern="/^[0-2]{0,1}[0-9]{1}[\:\-][0-5][0-9]$/"></td>
                                         <!-- /^[0-2]{0,1}[0-9]{1}[\:\-][0-5][0-9]$/ /^[\d]{1,2}[\:\-][\d]{1,2}$/ -->
                               <td class="no-border" ng-click="ctrl.deleteTimeSpan( dayOfWeek.dayName, hrs.from, hrs.until )"><img 
