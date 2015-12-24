@@ -1,7 +1,8 @@
 function googleLogin() {
     var auth = 'https://accounts.google.com/o/oauth2/v2/auth?';
     var response_type = 'response_type=token';
-    var redirect_uri = 'redirect_uri=http://127.0.0.1:8000/rest-auth/google/callback/';
+    var address = window.location.protocol + '//' + window.location.host;
+    var redirect_uri = 'redirect_uri=' + address + '/rest-auth/google/callback/';
     var scope = 'scope=profile';
     var state = 'state=ggl_login_' + Math.random().toString(32).substr(2);
     var client_id = 'client_id=1002894023379-v9kp62nummuhj8leq06kueogc6u8i8p9.apps.googleusercontent.com';
