@@ -27,6 +27,7 @@ module.exports = function(config) {
 
       'da/static/da/ang/js/da-ang_controllers_test.js',
       'da/static/da/ang/js/da-ang-p_controller_test.js',
+      'da/static/da/ang/js/da-ang-p_directives_test.js',
     ],
 
 
