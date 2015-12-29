@@ -112,6 +112,30 @@ describe('HomeController', function() {
 });
 
 
+
+// ==========================================================
+//     DetailsController
+// ==========================================================
+describe('DetailsController', function() {
+    beforeEach( module('djangy') );
+
+    var ctrl, listData;
+
+    beforeEach( inject( function($controller, CompanyListService) {
+        spyOn(CompanyListService, 'getItemData')
+            .and.returnValue( [ {id: 1, label: 'Mock'} ] );
+        listData = CompanyListService;
+        ctrl = $controller('DetailsController');
+    }));
+
+    it('test 1: should load mocked out detailed data', function() {
+        expect(listData.getItemData).toHaveBeenCalled();
+        expect(listData.getItemData.calls.count()).toEqual(1);
+        expect(ctrl.CompanyDetailsData).toEqual( [{id: 1, label: 'Mock'}] );
+    });
+
+});
+
 /*    var ctrl, mockService;
 
     beforeEach( module( function($provide) {
@@ -131,21 +155,3 @@ describe('HomeController', function() {
         expect(ctrl.CompaniesData).toEqual([{id: 1, label: 'Mock'}]);
     });
 */
-
-
-/*    var ctrl, listData;
-
-    beforeEach( inject( function($controller, CompanyListService) {
-        spyOn(CompanyListService, 'getListData')
-            .and.returnValue( [ {id: 1, label: 'Mock'} ] );
-        listData = CompanyListService;
-        ctrl = $controller('HomeController');
-    }));
-
-    it(' 1: should load mocked out list of data', function() {
-        expect(listData.getListData).toHaveBeenCalled();
-        expect(listData.getListData.calls.count()).toEqual(1);
-        expect(ctrl.CompaniesData).toEqual( [{id: 1, label: 'Mock'}] );
-    });
-*/
-

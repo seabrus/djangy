@@ -27,7 +27,7 @@ app.controller('ProfileController', [ 'DataService', function( DataService ) {
             return 1;
         })
         .catch( function() {
-            self.regData = [];
+            self.regData = {};
             if ( window.console ) { 
                 console.log('ProfileController: Error when GETting data');
             }
@@ -153,8 +153,13 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
        	};
 
         // New company profile
-        if ( data['is_new'] == true ) {
+        if ( data['is_new'] === true ) {
             return regData;
+        }
+
+        // Error response (404, etc) -- data doesn't include required fields
+        if ( data['hours'] === undefined ) {
+            return data;
         }
 
         // Existing company profile
