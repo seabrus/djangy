@@ -3,16 +3,16 @@ exports.config = {
   seleniumAddress: 'http://localhost:4444/wd/hub',
 
   // The address where our server under test is running
-  baseUrl: 'http://localhost:8080/',
+  baseUrl: 'http://localhost:8000/',
 
   // Capabilities to be passed to the webdriver instance.
   capabilities: {
-    'browserName': 'chrome'
+    'browserName': 'firefox'
   },
 
   // Spec patterns are relative to the location of the
   // spec file. They may include glob patterns.
-  specs: ['*Spec*.js'],
+  specs: ['djangy_scenario.js'],
 
   // Options to be passed to Jasmine-node.
   jasmineNodeOpts: {
