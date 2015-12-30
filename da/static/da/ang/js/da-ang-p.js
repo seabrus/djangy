@@ -286,12 +286,12 @@ app.factory('DataService', [ '$http', 'COMPANY_PROFILE_URL', function( $http, CO
                         var keys = Object.keys(err.data);
                         var str = '';
                         for (var k=0, len=keys.length; k < len; k++) {
-                            str += keys[k] + ': ' + err[ keys[k] ].join(', ') + '\n';
+                            str += keys[k] + ': ' + err.data[ keys[k] ].join(', ') + '\n';
                         }
                         result[1] = str;
                     }
                     catch(e) {
-                        result[1] = 'Error: status = ' + err.status + ', ' + err.statusText;
+                        result[1] = 'Error: status = ' + err.status + ', ' + err.statusText;     // err.status == 500, 404 and so on
                     }
                 });
 
