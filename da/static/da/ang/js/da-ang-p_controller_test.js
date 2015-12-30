@@ -113,13 +113,12 @@ describe('ProfileController', function() {
     };
 
     var ctrl;
-    var mockBackend, mockBackendExpectGET, mockBackendExpectPOST;
+    var mockBackend, mockBackendExpectGET;
 
 
     beforeEach( inject( function($controller, $httpBackend) {
         mockBackend = $httpBackend;
         mockBackendExpectGET = mockBackend.expectGET( '/company-profile/' );
-        //mockBackendExpectPOST = mockBackend.expectPOST( '/company-profile/' );
         ctrl = $controller('ProfileController');
     }));
 
@@ -164,8 +163,126 @@ describe('ProfileController', function() {
         mockBackend.verifyNoOutstandingRequest();
     });
 
-
 });
 
+
+
+// ==========================================================
+//     ProfileController   ---  POST request
+// ==========================================================
+describe('ProfileController', function() {
+    beforeEach( module('djangy') );
+
+    var testDBData = {
+        "id": 1,
+        "company_name": "ABC",
+        "founded_at": "1970",
+        "email": "abc@abc.com",
+        "logo_url": "/media/da/logo1.png",
+        "payment_method": "PayPal",
+        "subscription_plan": "Business plan",
+        "hours": [
+          { "id": 21, "day_name": "Tuesday", "from_time": "9:00", "until_time": "12:30", "db_id": 21 },
+        ],
+    };
+    var testClientData = {
+        id: 1,
+        companyName: 'ABC',
+        foundedAt: '1970',
+        email: 'abc@abc.com',
+        logoUrl: '/media/da/logo1.png',
+        paymentMethod: 'PayPal',
+        subscriptionPlan: 'Business plan',
+        newLogoFile: undefined,
+        previewUrl: '/media/da/logo-dummy.png',
+        openingHours: [
+            { dayName: 'Monday', hours: [] },
+            { dayName: 'Tuesday', hours: [{ id: 21, from: '9:00', until: '12:30', db_id: 21 }] },
+            { dayName: 'Wednesday', hours: [] },
+            { dayName: 'Thursday', hours: [] },
+            { dayName: 'Friday', hours: [] },
+            { dayName: 'Saturday', hours: [] },
+            { dayName: 'Sunday', hours: [] },
+        ],
+    };
+    var testPOSTJsonData = '{"hours":[{"id":21,"from_time":"9:00","until_time":"12:30","db_id":21,"day_name":"Tuesday"}],"id":1,"company_name":"ABC","founded_at":"1970","email":"abc@abc.com","payment_method":"PayPal","subscription_plan":"Business plan","logo_url":"/media/da/logo1.png"}';
+
+
+    var ctrl, createController;
+    var mockBackend, mockBackendExpectPOST;
+
+    beforeEach( inject( function($controller, $httpBackend) {
+        mockBackend = $httpBackend;
+        // Initial GET request
+        mockBackend.whenGET( '/company-profile/' ).respond( testDBData );
+
+        createController = function() {
+           return $controller('ProfileController');
+        };
+    }));
+
+
+    it('POST test 1 - no a new logo file: should return "success" for successful response', function() {
+      // Initial GET request flush and test
+        ctrl = createController();
+        mockBackend.flush();
+        expect(ctrl.regData).toEqual( testClientData );
+
+      // Simulate POST request (Save Profile action imitation)
+        //ctrl.regData.newLogoFile = 'new file';
+        ctrl.setValidity('Basics', true);
+        ctrl.setValidity('Hours', true);
+        var postHeaderTest = function(headers) {
+            if ( headers['Content-Type'] === 'application/json' )
+                return true;
+        };
+
+        mockBackend.expectPOST('/company-profile/', testPOSTJsonData, postHeaderTest).respond( {data: {}} );
+        ctrl.saveCompanyProfile();
+        mockBackend.flush();
+
+        expect(ctrl.savingResult[0]).toEqual( 'success' );
+        expect(ctrl.regData.logoUrl).toEqual( '' );
+        expect(ctrl.regData.newLogoFile).toEqual( undefined );
+
+    });
+
+
+    it('POST test 2 - a new logo file added: should return "success" for successful response', function() {
+      // Initial GET request flush and test
+        ctrl = createController();
+        mockBackend.flush();
+        expect(ctrl.regData).toEqual( testClientData );
+
+      // Simulate POST request (Save Profile action imitation)
+        ctrl.regData.newLogoFile = 'new file';
+        ctrl.setValidity('Basics', true);
+        ctrl.setValidity('Hours', true);
+        var postBodyTest = function(data) {
+            return true;
+        };
+        var postHeaderTest = function(headers) {
+            if ( headers['Content-Type'] === undefined )
+                return true;
+        };
+
+        mockBackend.expectPOST('/company-profile/', postBodyTest, postHeaderTest).respond( {data: {}} );
+        ctrl.saveCompanyProfile();
+        mockBackend.flush();
+
+        expect(ctrl.savingResult[0]).toEqual( 'success' );
+        expect(ctrl.regData.newLogoFile).toEqual( undefined );
+
+    });
+
+
+    afterEach(function() {
+        // Ensure that all expects set on the $httpBackend were actually called
+        mockBackend.verifyNoOutstandingExpectation();
+        // Ensure that all requests to the server have actually responded (using flush())
+        mockBackend.verifyNoOutstandingRequest();
+    });
+
+});
 
 
