@@ -12,7 +12,7 @@ exports.config = {
 
   // Spec patterns are relative to the location of the
   // spec file. They may include glob patterns.
-  specs: ['djangy_scenario.js'],
+  specs: ['djangy_spec.js'],
 
   // Options to be passed to Jasmine-node.
   jasmineNodeOpts: {
