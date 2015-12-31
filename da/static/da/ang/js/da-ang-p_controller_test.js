@@ -229,8 +229,6 @@ describe('ProfileController', function() {
         expect(ctrl.regData).toEqual( testClientData );
 
       // Simulate POST request (Save Profile action imitation)
-        ctrl.setValidity('Basics', true);
-        ctrl.setValidity('Hours', true);
         var postHeaderTest = function(headers) {
             if ( headers['Content-Type'] === 'application/json' )
                 return true;
@@ -243,7 +241,6 @@ describe('ProfileController', function() {
         expect(ctrl.savingResult[0]).toEqual( 'success' );
         expect(ctrl.regData.logoUrl).toEqual( '' );
         expect(ctrl.regData.newLogoFile).toEqual( undefined );
-
     });
 
 
@@ -254,9 +251,6 @@ describe('ProfileController', function() {
         expect(ctrl.regData).toEqual( testClientData );
 
       // Simulate POST request (Save Profile action imitation)
-        ctrl.regData.newLogoFile = 'new file';
-        ctrl.setValidity('Basics', true);
-        ctrl.setValidity('Hours', true);
         var postBodyTest = function(data) {
             return true;
         };
@@ -264,6 +258,7 @@ describe('ProfileController', function() {
             if ( headers['Content-Type'] === undefined )
                 return true;
         };
+        ctrl.regData.newLogoFile = 'new file';
 
         mockBackend.expectPOST('/company-profile/', postBodyTest, postHeaderTest).respond( {"logo_url": "/media/15.png"} );
         ctrl.saveCompanyProfile();
@@ -272,20 +267,16 @@ describe('ProfileController', function() {
         expect(ctrl.savingResult[0]).toEqual( 'success' );
         expect(ctrl.regData.logoUrl).toEqual( '/media/15.png' );
         expect(ctrl.regData.newLogoFile).toEqual( undefined );
-
     });
 
 
-    it('POST test 3: should return "error" for error response', function() {
+    it('POST test 3: should return "error" and response.data for errors in validation', function() {
       // Initial GET request flush and test
         ctrl = createController();
         mockBackend.flush();
         expect(ctrl.regData).toEqual( testClientData );
 
       // Simulate POST request (Save Profile action imitation)
-        ctrl.regData.newLogoFile = 'new file';
-        ctrl.setValidity('Basics', true);
-        ctrl.setValidity('Hours', true);
         var postBodyTest = function(data) {
             return true;
         };
@@ -293,19 +284,50 @@ describe('ProfileController', function() {
             if ( headers['Content-Type'] === undefined )
                 return true;
         };
+        ctrl.regData.newLogoFile = 'new file';
 
         mockBackend.expectPOST('/company-profile/', postBodyTest, postHeaderTest)
             .respond(   500, 
-                            '{"data1":["Wrong type","This field is required"]}',   // The reply from DRF if error occurs when validating data
-                            {"header1": "ZZZ"}, 
+                            '{\
+                              "data1":["Wrong type","This field is required"],\
+                              "data2":["This field should have 4 digits","Maxlength error"]\
+                            }'                             // DRF's response.data format if errors occur when validating data on the server
+            );
+        ctrl.saveCompanyProfile();
+        mockBackend.flush();
+
+        expect(ctrl.savingResult[0]).toEqual( 'error' );
+        expect(ctrl.savingResult[1])
+            .toEqual( 'data1: Wrong type, This field is required\ndata2: This field should have 4 digits, Maxlength error\n' );
+    });
+
+    it('POST test 4: should return "error" and error message for server error (not DRF validation)', function() {
+      // Initial GET request flush and test
+        ctrl = createController();
+        mockBackend.flush();
+        expect(ctrl.regData).toEqual( testClientData );
+
+      // Simulate POST request (Save Profile action imitation)
+        var postBodyTest = function(data) {
+            return true;
+        };
+        var postHeaderTest = function(headers) {
+            if ( headers['Content-Type'] === undefined )
+                return true;
+        };
+        ctrl.regData.newLogoFile = 'new file';
+
+        mockBackend.expectPOST('/company-profile/', postBodyTest, postHeaderTest)
+            .respond(   500, 
+                            'Imitation of a wrong DRF response',
+                            {"dummy header": "Z"}, 
                             "Internal server error" 
             );
         ctrl.saveCompanyProfile();
         mockBackend.flush();
 
         expect(ctrl.savingResult[0]).toEqual( 'error' );
-        expect(ctrl.savingResult[1]).toEqual( 'data1: Wrong type, This field is required\n' );
-
+        expect(ctrl.savingResult[1]).toEqual( 'Error: status = 500, Internal server error' );
     });
 
 
