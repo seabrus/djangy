@@ -5,7 +5,7 @@ function googleLogin() {
     var redirect_uri = 'redirect_uri=' + address + '/rest-auth/google/callback/';
     var scope = 'scope=profile';
     var state = 'state=ggl_login_' + Math.random().toString(32).substr(2);
-    var client_id = 'client_id=1002894023379-v9kp62nummuhj8leq06kueogc6u8i8p9.apps.googleusercontent.com';
+    var client_id = 'client_id=...';
     var url = auth + '&' + response_type + '&' + redirect_uri + '&' + scope + '&' + state + '&' + client_id;
     var popupWidth = 500;
     var popupHeight = 400;
@@ -244,7 +244,7 @@ if (typeof define === 'function' && define.amd) {
   window.GO2 = GO2;
 }
 
-var go2 = new GO2( { clientId: '1002894023379-v9kp62nummuhj8leq06kueogc6u8i8p9.apps.googleusercontent.com',
+var go2 = new GO2( { clientId: '...',
                                 redirectUri: 'http://127.0.0.1:8000/rest-auth/google/callback/',
                 } );
 
